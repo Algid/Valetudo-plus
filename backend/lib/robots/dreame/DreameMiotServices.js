@@ -355,6 +355,9 @@ module.exports = {
                 MOP_DOCK_WATER_USAGE: {
                     PIID: 46
                 },
+                INTELLIGENT_MAP_RECOGNITION: {
+                    PIID: 49
+                },
                 MISC_TUNABLES: {
                     PIID: 50
                 }
@@ -572,6 +575,9 @@ module.exports = {
 
                 ACTION_RESULT: {
                     PIID: 6
+                },
+                MULTI_MAP: {
+                    PIID: 7
                 }
             },
             ACTIONS: {
@@ -635,6 +641,9 @@ module.exports = {
             PROPERTIES: {
                 HIGH_RES_WATER_USAGE: {
                     PIID: 1
+                },
+                CLEAN_CARPETS_FIRST: {
+                    PIID: 2
                 },
                 HIGH_RES_MOP_DOCK_HEATER: {
                     PIID: 8

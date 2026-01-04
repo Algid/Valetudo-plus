@@ -31,7 +31,6 @@ import {
     SettingsRemote as SettingsRemoteIcon,
     GitHub as GithubIcon,
     Favorite as DonateIcon,
-    MenuBook as DocsIcon,
     Wysiwyg as SystemInformationIcon,
     Info as AboutIcon,
     Help as HelpIcon,
@@ -161,6 +160,12 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
         kind: "MenuSubEntry",
         route: "/options/map_management/segments",
         title: "Segment Management",
+        parentRoute: "/options/map_management"
+    },
+    {
+        kind: "MenuSubEntry",
+        route: "/options/map_management/segment_clean_order",
+        title: "Segment Clean Order",
         parentRoute: "/options/map_management"
     },
     {
@@ -319,9 +324,9 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
         });
 
         if (ret !== "") {
-            document.title = `Valetudo - ${ret}`;
+            document.title = `Valetudo+ - ${ret}`;
         } else {
-            document.title = "Valetudo";
+            document.title = "Valetudo+";
         }
 
         return currentMenuEntry.title;
@@ -463,25 +468,14 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     <Divider/>
                     <ListItemButton
                         component="a"
-                        href="https://valetudo.cloud"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        <ListItemIcon>
-                            <DocsIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Docs"/>
-                    </ListItemButton>
-                    <ListItemButton
-                        component="a"
-                        href="https://github.com/Hypfer/Valetudo"
+                        href="https://github.com/Algid/Valetudo-plus"
                         target="_blank"
                         rel="noopener"
                     >
                         <ListItemIcon>
                             <GithubIcon/>
                         </ListItemIcon>
-                        <ListItemText primary="Hypfer/Valetudo"/>
+                        <ListItemText primary="Algid/Valetudo-plus"/>
                     </ListItemButton>
                     <ListItemButton
                         component="a"
@@ -492,7 +486,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         <ListItemIcon>
                             <DonateIcon/>
                         </ListItemIcon>
-                        <ListItemText primary="Donate"/>
+                        <ListItemText primary="Donate to Upstream"/>
                     </ListItemButton>
 
 

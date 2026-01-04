@@ -6,12 +6,22 @@
     },
     "webserver": {
         "port": 80,
+        "https": {
+            "enabled": false,
+            "port": 443,
+            "certSubPath": "cert.crt",
+            "keySubPath": "key.pem"
+        },
         "basicAuth": {
             "enabled": false,
-            "username": "valetudo",
-            "password": "valetudo"
+            "username": "admin",
+            "password": "password"
         },
-        "blockExternalAccess": true
+        "blockExternalAccess": true,
+        "streamerProxy": {
+            "url": "http://127.0.0.1:1984",
+            "timeoutMs": 15000
+        }
     },
     "mqtt": {
         "enabled": false,

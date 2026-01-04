@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "start:dev": "cross-env VALETUDO_CONFIG_PATH=../local/valetudo_config.json npm run start",
+    "start:dev": "cross-env VALETUDO_DATA_PATH=../local/valetudo npm run start",
     "lint": "eslint -c .automated.eslintrc.json .",
     "lint_fix": "eslint -c .automated.eslintrc.json . --fix",
     "lint_pedantic": "eslint -c .pedantic.eslintrc.json .",
@@ -40,6 +40,7 @@
     "ajv": "8.17.1",
     "async-mqtt": "2.6.3",
     "axios": "0.27.2",
+    "basic-auth": "2.0.1",
     "bonjour-service": "1.2.1",
     "compression": "1.7.4",
     "crc": "4.3.2",
@@ -49,8 +50,10 @@
     "express-list-endpoints": "7.1.0",
     "express-rate-limit": "7.4.1",
     "hashlru": "git+https://npm@github.com/Hypfer/hashlru#3.0.0",
+    "http-proxy-middleware": "3.0.5",
     "is-in-subnet": "4.0.1",
     "jstoxml": "5.0.2",
+    "lodash": "4.17.21",
     "mqtt": "5.10.1",
     "nested-object-assign": "1.0.4",
     "nested-property": "4.0.0",
@@ -71,9 +74,9 @@
     "@types/node-ssdp": "4.0.4",
     "@types/semaphore": "1.1.4",
     "@types/uuid": "10.0.0",
+    "@yao-pkg/pkg": "6.6.0",
     "cross-env": "7.0.3",
     "mocha": "10.7.3",
-    "@yao-pkg/pkg": "6.6.0",
     "should": "13.2.3"
   }
 }

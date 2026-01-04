@@ -29,6 +29,8 @@ const manifest = {
 }
 
 const binaries = {
+    "streamer.tar.gz": "./build/streamer.tar.gz",
+
     "valetudo-armv7": "./build/armv7/valetudo",
     "valetudo-armv7-lowmem": "./build/armv7/valetudo-lowmem",
     "valetudo-aarch64": "./build/aarch64/valetudo",

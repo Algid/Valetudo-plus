@@ -44,6 +44,7 @@ export interface RawMapLayerMetaData {
     area: number;
     segmentId?: string;
     name?: string;
+    cleanOrder?: number;
     active?: boolean;
     material?: RawMapLayerMaterial
 }
@@ -77,6 +78,8 @@ export enum RawMapEntityType {
 }
 
 export interface RawMapDataMetaData {
+    id?: string;
     version: number;
     nonce: string;
+    rotation?: number;
 }

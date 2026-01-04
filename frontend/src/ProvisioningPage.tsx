@@ -21,7 +21,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ReactComponent as Logo} from "./assets/icons/valetudo_logo_with_name.svg";
+import {ReactComponent as Logo} from "./assets/icons/valetudo_plus_logo_with_name.svg";
 import React from "react";
 import {
     Refresh as RefreshIcon,

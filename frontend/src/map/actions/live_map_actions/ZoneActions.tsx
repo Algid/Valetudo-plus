@@ -65,15 +65,15 @@ const ZoneActions = (
                     }),
                     pB: convertPixelCoordinatesToCMSpace({
                         x: zone.x1,
-                        y: zone.y0
+                        y: zone.y1
                     }),
                     pC: convertPixelCoordinatesToCMSpace({
-                        x: zone.x1,
-                        y: zone.y1
+                        x: zone.x2,
+                        y: zone.y2
                     }),
                     pD: convertPixelCoordinatesToCMSpace({
-                        x: zone.x0,
-                        y: zone.y1
+                        x: zone.x3,
+                        y: zone.y3
                     })
                 }
             };

@@ -1,0 +1,23 @@
+{
+  "components": {
+    "schemas": {
+      "ValetudoMapEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "metaData": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

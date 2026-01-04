@@ -1,0 +1,61 @@
+{
+  "/api/v2/robot/capabilities/MultipleMapRenameCapability": {
+    "put": {
+      "tags": [
+        "MultipleMapRenameCapability"
+      ],
+      "summary": "Rename map",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "rename_map"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
+  "/api/v2/robot/capabilities/MultipleMapRenameCapability/properties": {
+    "get": {
+      "tags": [
+        "MultipleMapRenameCapability"
+      ],
+      "summary": "Get various capability-related properties",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import RestrictedZoneClientStructure from "./RestrictedZoneClientStructure";
+import BaseZoneClientStructure from "./BaseZoneClientStructure";
 
-class NoGoAreaClientStructure extends RestrictedZoneClientStructure {
+class NoGoAreaClientStructure extends BaseZoneClientStructure {
     public static readonly TYPE = "NoGoAreaClientStructure";
 
     protected activeStyle : { stroke: string, fill: string } = {

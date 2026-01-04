@@ -1,0 +1,20 @@
+{
+  "components": {
+    "schemas": {
+      "ValetudoAudioEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metaData": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

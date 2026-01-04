@@ -28,6 +28,7 @@ class MockValetudoRobot extends ValetudoRobot {
         this.registerCapability(new capabilities.MockWaterUsageControlCapability({robot: this}));
         this.registerCapability(new capabilities.MockSpeakerVolumeControlCapability({robot: this}));
         this.registerCapability(new capabilities.MockSpeakerTestCapability({robot: this}));
+        this.registerCapability(new capabilities.MockSpeakerPlayAudioCapability({robot: this}));
         this.registerCapability(new capabilities.MockKeyLockCapability({robot: this}));
         this.registerCapability(new capabilities.MockObstacleAvoidanceControlCapability({robot: this}));
         this.registerCapability(new capabilities.MockLocateCapability({robot: this}));
@@ -38,6 +39,13 @@ class MockValetudoRobot extends ValetudoRobot {
         this.registerCapability(new capabilities.MockPersistentMapControlCapability({robot: this}));
         this.registerCapability(new capabilities.MockPendingMapChangeHandlingCapability({robot: this}));
         this.registerCapability(new capabilities.MockMapSegmentationCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMapSegmentRenameCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMapSegmentCleanOrderCapability({robot: this}));
+        this.registerCapability(new capabilities.MockCombinedVirtualRestrictionsCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMultipleMapCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMultipleMapDeleteCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMultipleMapRenameCapability({robot: this}));
+        this.registerCapability(new capabilities.MockMultipleMapRotateCapability({robot: this}));
         this.registerCapability(new capabilities.MockZoneCleaningCapability({robot: this}));
         this.registerCapability(new capabilities.MockAutoEmptyDockManualTriggerCapability({robot: this}));
         this.registerCapability(new capabilities.MockAutoEmptyDockAutoEmptyIntervalControlCapability({robot: this}));
@@ -130,23 +138,24 @@ class MockValetudoRobot extends ValetudoRobot {
      */
     buildMap() {
         this.mockMap = {
-            size: 5000,
+            size: 300 * 5,
             pixelSize: 5,
             range: {
-                min: 200,
-                max: 800
+                min: 100,
+                max: 200
             }
         };
         this.state.map = new ValetudoMap({
             metaData: {
                 pendingMapChange: true,
+                rotation: 90
             },
             size: {
                 x: this.mockMap.size,
                 y: this.mockMap.size
             },
             pixelSize: this.mockMap.pixelSize,
-            layers: [this.buildFloor(), this.buildWall()],
+            layers: [this.buildFloor(), this.buildWall(), ...this.buildSegments()],
             entities: [this.buildCharger(), this.buildRobot()]
         });
         this.emitMapUpdated();
@@ -167,6 +176,47 @@ class MockValetudoRobot extends ValetudoRobot {
             type: MapLayer.TYPE.FLOOR,
             pixels: pixels
         });
+    }
+
+    /**
+     * @private
+     */
+    buildSegments() {
+        let pixels1 = [];
+        let pixels2 = [];
+
+        const height = this.mockMap.range.max - this.mockMap.range.min;
+        for (let x = this.mockMap.range.min; x <= this.mockMap.range.max; x++) {
+            for (let y = this.mockMap.range.min; y < this.mockMap.range.max - height / 2; y++) {
+                pixels1.push(x, y);
+            }
+
+            for (let y = this.mockMap.range.max - height / 2; y <= this.mockMap.range.max; y++) {
+                pixels2.push(x, y);
+            }
+        }
+
+        return [
+            new MapLayer({
+                type: MapLayer.TYPE.SEGMENT,
+                pixels: pixels1,
+                metaData: {
+                    segmentId: "1",
+                    name: "Main",
+                    active: false,
+                    cleanOrder: 1,
+                }
+            }),
+            new MapLayer({
+                type: MapLayer.TYPE.SEGMENT,
+                pixels: pixels2,
+                metaData: {
+                    segmentId: "2",
+                    active: false,
+                    cleanOrder: 2,
+                }
+            })
+        ];
     }
 
     /**

@@ -94,8 +94,8 @@ const updateProviders : Array<SelectListMenuItemOption> = [
         label: "Release"
     },
     {
-        value: "github_nightly",
-        label: "Nightly"
+        value: "github_prerelease",
+        label: "Pre-release"
     }
 ];
 

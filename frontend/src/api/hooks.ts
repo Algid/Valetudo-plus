@@ -139,6 +139,14 @@ import {
     sendSetSegmentMaterialCommand,
     fetchFloorMaterialDirectionAwareNavigationControlState,
     sendFloorMaterialDirectionAwareNavigationControlState,
+    fetchMultipleMapMaps,
+    sendMultipleMapSwitchCommand,
+    sendMultipleMapDeleteCommand,
+    sendMultipleMapRenameCommand,
+    fetchSpeakerPlayAudioList,
+    sendSpeakerPlayAudioCommand,
+    sendSegmentCleanOrderCommand,
+    sendMultipleMapRotateCommand,
     fetchCleanRoute,
     sendCleanRoute,
     fetchCleanRouteControlProperties,
@@ -166,11 +174,13 @@ import {
     MapSegmentEditSplitRequestParameters,
     MapSegmentMaterialControlRequestParameters,
     MapSegmentRenameRequestParameters,
+    MultipleMapRenameRequestParameters,
     MopDockMopWashTemperature,
     MQTTConfiguration,
     NetworkAdvertisementConfiguration,
     NTPClientConfiguration,
     NTPClientStatus,
+    MapEntry,
     Point,
     SetLogLevelRequest,
     Timer,
@@ -181,6 +191,7 @@ import {
     VoicePackManagementCommand,
     WifiConfiguration,
     ZoneActionRequestParameters,
+    MultipleMapRotateRequestParameters,
 } from "./types";
 import type { MutationFunction } from "@tanstack/query-core";
 
@@ -194,12 +205,14 @@ enum QueryKey {
     ZoneProperties = "zone_properties",
     Segments = "segments",
     MapSegmentationProperties = "map_segmentation_properties",
+    MultipleMapMaps = "multiple_map_maps",
     PersistentMap = "persistent_map",
     RobotInformation = "robot_information",
     ValetudoInformation = "valetudo_information",
     ValetudoVersion = "valetudo_version",
     CarpetMode = "carpet_mode",
     SpeakerVolume = "speaker_volume",
+    SpeakerPlayAudioList = "speaker_play_audio_list",
     VoicePackManagement = "voice_pack",
     SystemHostInfo = "system_host_info",
     SystemRuntimeInfo = "system_runtime_info",
@@ -641,6 +654,97 @@ export const useSetSegmentMaterialMutation = (
     });
 };
 
+export const useSegmentCleanOrderMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (segmentIds: string[]) => {
+            return sendSegmentCleanOrderCommand(segmentIds).then(fetchStateAttributes); // TODO Algid: This should refetch map. Check above mutation.
+        },
+
+        onError: useOnCommandError(Capability.MapSegmentCleanOrder),
+        onSuccess: async (data, ...args) => {
+            queryClient.setQueryData<RobotAttribute[]>([QueryKey.Attributes], data, {
+                updatedAt: Date.now(),
+            });
+        },
+    });
+};
+
+export const useMultipleMapMapsQuery = () => {
+    return useQuery({
+        queryKey: [QueryKey.MultipleMapMaps],
+        queryFn: fetchMultipleMapMaps,
+
+        staleTime: 10_000,
+        refetchInterval: 30_000,
+    });
+};
+
+export const useMultipleMapSwitchMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => {
+            return sendMultipleMapSwitchCommand(id).then(fetchMultipleMapMaps);
+        },
+        onError: useOnCommandError(Capability.MultipleMap),
+        onSuccess: async (data, ...args) => {
+            queryClient.setQueryData<MapEntry[]>([QueryKey.MultipleMapMaps], data, {
+                updatedAt: Date.now(),
+            });
+        },
+    });
+};
+
+export const useMultipleMapDeleteMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => {
+            return sendMultipleMapDeleteCommand(id).then(fetchMultipleMapMaps);
+        },
+        onError: useOnCommandError(Capability.MultipleMapDelete),
+        onSuccess: async (data, ...args) => {
+            queryClient.setQueryData<MapEntry[]>([QueryKey.MultipleMapMaps], data, {
+                updatedAt: Date.now(),
+            });
+        },
+    });
+};
+
+export const useMultipleMapRenameMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (parameters: MultipleMapRenameRequestParameters) => {
+            return sendMultipleMapRenameCommand(parameters).then(fetchMultipleMapMaps);
+        },
+        onError: useOnCommandError(Capability.MultipleMapRename),
+        onSuccess: async (data, ...args) => {
+            queryClient.setQueryData<MapEntry[]>([QueryKey.MultipleMapMaps], data, {
+                updatedAt: Date.now(),
+            });
+        },
+    });
+};
+
+export const useMultipleMapRotateMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (parameters: MultipleMapRotateRequestParameters) => {
+            return sendMultipleMapRotateCommand(parameters).then(fetchStateAttributes); // TODO Algid: This should refetch map. Check useSegmentCleanOrderMutation mutation.
+        },
+        onError: useOnCommandError(Capability.MultipleMapRotate),
+        onSuccess: async (data, ...args) => {
+            queryClient.setQueryData<RobotAttribute[]>([QueryKey.Attributes], data, {
+                updatedAt: Date.now(),
+            });
+        },
+    });
+};
+
 export const useLocateMutation = () => {
     return useMutation({
         mutationFn: sendLocateCommand,
@@ -1064,6 +1168,22 @@ export const useSpeakerTestTriggerTriggerMutation = () => {
     return useMutation({
         mutationFn: sendSpeakerTestCommand,
         onError: useOnCommandError(Capability.SpeakerTest)
+    });
+};
+
+export const useSpeakerPlayAudioListQuery = () => {
+    return useQuery({
+        queryKey: [QueryKey.SpeakerPlayAudioList],
+        queryFn: fetchSpeakerPlayAudioList,
+
+        staleTime: Infinity
+    });
+};
+
+export const useSpeakerPlayAudioTriggerMutation = () => {
+    return useMutation({
+        mutationFn: sendSpeakerPlayAudioCommand,
+        onError: useOnCommandError(Capability.SpeakerPlayAudio),
     });
 };
 

@@ -1,0 +1,79 @@
+{
+  "/api/v2/robot/capabilities/SpeakerPlayAudioCapability": {
+    "get": {
+      "tags": [
+        "SpeakerPlayAudioCapability"
+      ],
+      "summary": "Get audio list",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ValetudoAudioEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "SpeakerPlayAudioCapability"
+      ],
+      "summary": "Play audio",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "play_audio"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
+  "/api/v2/robot/capabilities/SpeakerPlayAudioCapability/properties": {
+    "get": {
+      "tags": [
+        "SpeakerPlayAudioCapability"
+      ],
+      "summary": "Get various capability-related properties",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

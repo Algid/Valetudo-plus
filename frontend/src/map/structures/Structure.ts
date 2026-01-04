@@ -30,7 +30,7 @@ abstract class Structure {
         this.type = (this.constructor as typeof Structure).TYPE;
     }
 
-    abstract draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number) : void
+    abstract draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number, rotationRads: number) : void
 
     protected drawPill(
         ctx: CanvasRenderingContext2D,

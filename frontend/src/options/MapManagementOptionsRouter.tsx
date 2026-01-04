@@ -6,18 +6,23 @@ import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {Capability} from "../api";
 import React from "react";
 import RobotCoverageMapPage from "../map/RobotCoverageMapPage";
+import SegmentCleanOrderPage from "../map/SegmentCleanOrder";
 
 const OptionsRouter = (): React.ReactElement => {
     const [
         combinedVirtualRestrictionsCapabilitySupported,
 
         mapSegmentEditCapabilitySupported,
-        mapSegmentRenameCapabilitySupported
+        mapSegmentRenameCapabilitySupported,
+
+        mapSegmentCleanOrderCapabilitySupported
     ] = useCapabilitiesSupported(
         Capability.CombinedVirtualRestrictions,
 
         Capability.MapSegmentEdit,
-        Capability.MapSegmentRename
+        Capability.MapSegmentRename,
+
+        Capability.MapSegmentCleanOrder
     );
 
     return (
@@ -32,6 +37,15 @@ const OptionsRouter = (): React.ReactElement => {
                         <EditMapPage
                             mode={"segments"}
                         />
+                    }
+                />
+            }
+            {
+                mapSegmentCleanOrderCapabilitySupported &&
+                <Route
+                    path={"segment_clean_order"}
+                    element={
+                        <SegmentCleanOrderPage />
                     }
                 />
             }

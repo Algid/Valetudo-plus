@@ -8,13 +8,14 @@
       'build-valetudo':
         {
           'runs-on': 'ubuntu-latest',
+          'strategy': { 'matrix': { 'node-version': ['20.x'] } },
           'steps':
             [
               { 'uses': 'actions/checkout@v4' },
               {
-                'name': 'Use Node.js 20.x',
+                'name': 'Use Node.js ${{ matrix.node-version }}',
                 'uses': 'actions/setup-node@v4',
-                'with': { 'node-version': '20.x' },
+                'with': { 'node-version': '${{ matrix.node-version }}' },
               },
               { 'name': 'Install', 'run': 'npm ci' },
               {
@@ -37,9 +38,13 @@
                 'name': 'Build Valetudo aarch64',
                 'run': 'npm run build_aarch64 --workspace=backend',
               },
+              {
+                'name': 'Build streamer.tar.gz',
+                'run': 'npm run build:streamer',
+              },
 
               {
-                'name': 'Upload armv7 build',
+                'name': 'Upload Valetudo armv7',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
@@ -48,7 +53,7 @@
                   },
               },
               {
-                'name': 'Upload armv7 lowmem build',
+                'name': 'Upload Valetudo armv7 lowmem',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
@@ -57,12 +62,21 @@
                   },
               },
               {
-                'name': 'Upload aarch64 build',
+                'name': 'Upload Valetudo aarch64',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-aarch64',
                     'path': './build/aarch64/valetudo',
+                  },
+              },
+              {
+                'name': 'Upload streamer.tar.gz',
+                'uses': 'actions/upload-artifact@v4',
+                'with':
+                  {
+                    'name': 'streamer.tar.gz',
+                    'path': './build/streamer.tar.gz',
                   },
               },
 
@@ -71,7 +85,7 @@
                 'run': 'npm run upx',
               },
               {
-                'name': 'Upload armv7 upx build',
+                'name': 'Upload Valetudo armv7.upx',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
@@ -80,7 +94,7 @@
                   },
               },
               {
-                'name': 'Upload armv7 lowmem upx build',
+                'name': 'Upload Valetudo armv7 lowmem.upx',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
@@ -89,7 +103,7 @@
                   },
               },
               {
-                'name': 'Upload aarch64 upx build',
+                'name': 'Upload Valetudo aarch64.upx',
                 'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
@@ -109,6 +123,16 @@
                   {
                     'name': 'valetudo_release_manifest.json',
                     'path': './build/valetudo_release_manifest.json',
+                  },
+              },
+              
+              {
+                'name': 'Upload OpenAPI spec',
+                'uses': 'actions/upload-artifact@v4',
+                'with':
+                  {
+                    'name': 'valetudo.openapi.schema.json',
+                    'path': './build/valetudo.openapi.schema.json',
                   },
               },
             ],

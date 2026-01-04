@@ -36,6 +36,10 @@
                 'name': 'Build Valetudo aarch64',
                 'run': 'npm run build_aarch64 --workspace=backend',
               },
+              {
+                'name': 'Build streamer.tar.gz',
+                'run': 'npm run build:streamer',
+              },
 
               {
                 'name': 'Upload Valetudo armv7',
@@ -70,6 +74,18 @@
                     'upload_url': '${{ github.event.release.upload_url }}',
                     'asset_path': './build/aarch64/valetudo',
                     'asset_name': 'valetudo-aarch64',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
+              {
+                'name': 'Upload streamer.tar.gz',
+                'uses': 'hypfer/upload-release-asset@v1.2.0',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/streamer.tar.gz',
+                    'asset_name': 'streamer.tar.gz',
                     'asset_content_type': 'binary/octet-stream',
                   },
               },

@@ -1,6 +1,8 @@
 {
   "__class": "ValetudoMap",
   "metaData": {
+		"id": "4",
+    "rotation": 0,
     "version": 2,
     "totalLayerArea": 477350
   },

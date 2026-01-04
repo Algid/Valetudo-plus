@@ -759,6 +759,178 @@ class DreameQuirkFactory {
                         );
                     }
                 });
+            case DreameQuirkFactory.KNOWN_QUIRKS.MULTI_MAP:
+                return new Quirk({
+                    id: id,
+                    title: "Multi Map",
+                    description: "Select if you want the robot to store multiple maps.",
+                    options: ["On", "Off"],
+                    getter: async () => {
+                        const res = await this.helper.readProperty(
+                            DreameMiotServices["GEN2"].MAP.SIID,
+                            DreameMiotServices["GEN2"].MAP.PROPERTIES.MULTI_MAP.PIID
+                        );
+
+                        switch (res) {
+                            case 1:
+                                return "On";
+                            case 0:
+                                return "Off";
+                            default:
+                                throw new Error(`Received invalid value ${res}`);
+                        }
+                    },
+                    setter: async (value) => {
+                        let val;
+
+                        switch (value) {
+                            case "On":
+                                val = 1;
+                                break;
+                            case "Off":
+                                val = 0;
+                                break;
+                            default:
+                                throw new Error(`Received invalid value ${value}`);
+                        }
+
+                        return this.helper.writeProperty(
+                            DreameMiotServices["GEN2"].MAP.SIID,
+                            DreameMiotServices["GEN2"].MAP.PROPERTIES.MULTI_MAP.PIID,
+                            val
+                        );
+                    }
+                });
+            case DreameQuirkFactory.KNOWN_QUIRKS.CLEAN_CARPETS_FIRST:
+                return new Quirk({
+                    id: id,
+                    title: "Clean Carpets First",
+                    description: "Select if you want the robot to clean carpets first then other areas.",
+                    options: ["On", "Off"],
+                    getter: async () => {
+                        const res = await this.helper.readProperty(
+                            DreameMiotServices["GEN2"].MOP_EXPANSION.SIID,
+                            DreameMiotServices["GEN2"].MOP_EXPANSION.PROPERTIES.CLEAN_CARPETS_FIRST.PIID
+                        );
+
+                        switch (res) {
+                            case 1:
+                                return "On";
+                            case 0:
+                                return "Off";
+                            default:
+                                throw new Error(`Received invalid value ${res}`);
+                        }
+                    },
+                    setter: async (value) => {
+                        let val;
+
+                        switch (value) {
+                            case "On":
+                                val = 1;
+                                break;
+                            case "Off":
+                                val = 0;
+                                break;
+                            default:
+                                throw new Error(`Received invalid value ${value}`);
+                        }
+
+                        return this.helper.writeProperty(
+                            DreameMiotServices["GEN2"].MOP_EXPANSION.SIID,
+                            DreameMiotServices["GEN2"].MOP_EXPANSION.PROPERTIES.CLEAN_CARPETS_FIRST.PIID,
+                            val
+                        );
+                    }
+                });
+            case DreameQuirkFactory.KNOWN_QUIRKS.INTELLIGENT_MAP_RECOGNITION:
+                return new Quirk({
+                    id: id,
+                    title: "Intelligent Map Recognition",
+                    description: "Select if you want the robot to automatically switch map based on its location.",
+                    options: ["On", "Off"],
+                    getter: async () => {
+                        const res = await this.helper.readProperty(
+                            DreameMiotServices["GEN2"].VACUUM_2.SIID,
+                            DreameMiotServices["GEN2"].VACUUM_2.PROPERTIES.INTELLIGENT_MAP_RECOGNITION.PIID
+                        );
+
+                        switch (res) {
+                            case 1:
+                                return "On";
+                            case 0:
+                                return "Off";
+                            default:
+                                throw new Error(`Received invalid value ${res}`);
+                        }
+                    },
+                    setter: async (value) => {
+                        let val;
+
+                        switch (value) {
+                            case "On":
+                                val = 1;
+                                break;
+                            case "Off":
+                                val = 0;
+                                break;
+                            default:
+                                throw new Error(`Received invalid value ${value}`);
+                        }
+
+                        return this.helper.writeProperty(
+                            DreameMiotServices["GEN2"].VACUUM_2.SIID,
+                            DreameMiotServices["GEN2"].VACUUM_2.PROPERTIES.INTELLIGENT_MAP_RECOGNITION.PIID,
+                            val
+                        );
+                    }
+                });
+            case DreameQuirkFactory.KNOWN_QUIRKS.SUCTION_MAX:
+                return new Quirk({
+                    id: id,
+                    title: "Suction Boost",
+                    description: "Select if you want the robot to boost suction for the next cleaning operation.",
+                    options: ["On", "Off"],
+                    getter: async () => {
+                        const res = await this.helper.readProperty(
+                            DreameMiotServices["GEN2"].VACUUM_2.SIID,
+                            DreameMiotServices["GEN2"].VACUUM_2.PROPERTIES.MISC_TUNABLES.PIID
+                        );
+
+                        const deserializedResponse = DreameUtils.DESERIALIZE_MISC_TUNABLES(res);
+                        switch (deserializedResponse.SuctionMax) {
+                            case 1:
+                                return "On";
+                            case 0:
+                                return "Off";
+                            default:
+                                throw new Error(`Received invalid value ${deserializedResponse.SuctionMax}`);
+                        }
+                    },
+                    setter: async (value) => {
+                        let val;
+
+                        switch (value) {
+                            case "On":
+                                val = 1;
+                                break;
+                            case "Off":
+                                val = 0;
+                                break;
+                            default:
+                                throw new Error(`Received invalid value ${value}`);
+                        }
+
+
+                        return this.helper.writeProperty(
+                            DreameMiotServices["GEN2"].VACUUM_2.SIID,
+                            DreameMiotServices["GEN2"].VACUUM_2.PROPERTIES.MISC_TUNABLES.PIID,
+                            DreameUtils.SERIALIZE_MISC_TUNABLES_SINGLE_TUNABLE({
+                                SuctionMax: val
+                            })
+                        );
+                    }
+                });
             default:
                 throw new Error(`There's no quirk with id ${id}`);
         }
@@ -783,6 +955,10 @@ DreameQuirkFactory.KNOWN_QUIRKS = {
     MOP_DOCK_CLEANING_PROCESS_TRIGGER: "42c7db4b-2cad-4801-a526-44de8944a41f",
     WATER_HOOKUP_TEST_TRIGGER: "86094736-d66e-40c3-807c-3f5ef33cbf09",
     SIDE_BRUSH_ON_CARPET: "d23d7e7e-ef74-42a6-8a0a-4163742e437b",
+    MULTI_MAP: "bd9e34f6-6780-4507-ad32-20e80f5c6b8d",
+    CLEAN_CARPETS_FIRST: "6e2305ea-21c3-4420-97ae-19b294aaee45",
+    INTELLIGENT_MAP_RECOGNITION: "ee22d7ed-e5ec-45ab-bfa6-df7258eb19eb",
+    SUCTION_MAX: "4d7df230-78d7-4a88-bf92-cf97a69607bb"
 };
 
 module.exports = DreameQuirkFactory;

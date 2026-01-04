@@ -30,6 +30,7 @@ import {
     MapSegmentMaterialControlProperties,
     MapSegmentMaterialControlRequestParameters,
     MapSegmentRenameRequestParameters,
+    MultipleMapRenameRequestParameters,
     MopDockMopWashTemperature,
     MopDockMopWashTemperaturePayload,
     MopDockMopWashTemperatureProperties,
@@ -41,6 +42,7 @@ import {
     NTPClientConfiguration,
     NTPClientStatus,
     ObstacleImagesProperties,
+    MapEntry,
     Point,
     Quirk,
     RobotInformation,
@@ -72,6 +74,8 @@ import {
     WifiStatus,
     ZoneActionRequestParameters,
     ZoneProperties,
+    AudioEntry,
+    MultipleMapRotateRequestParameters,
 } from "./types";
 import { floorObject } from "./utils";
 import {preprocessMap} from "./mapUtils";
@@ -387,6 +391,78 @@ export const fetchMapSegmentMaterialControlProperties = async (): Promise<MapSeg
         .then(({data}) => {
             return data;
         });
+};
+
+export const sendSegmentCleanOrderCommand = async (
+    segmentIds: string[]
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MapSegmentCleanOrder}`,
+        {
+            action: "order_segments",
+            segment_ids: segmentIds,
+        }
+    );
+};
+
+export const fetchMultipleMapMaps = async (): Promise<MapEntry[]> => {
+    return valetudoAPI
+        .get<MapEntry[]>(
+            `/robot/capabilities/${Capability.MultipleMap}`
+        )
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendMultipleMapSwitchCommand = async (
+    id: string
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MultipleMap}`,
+        {
+            action: "switch_map",
+            id: id
+        }
+    );
+};
+
+export const sendMultipleMapDeleteCommand = async (
+    id: string
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MultipleMapDelete}`,
+        {
+            action: "delete_map",
+            id: id
+        }
+    );
+};
+
+export const sendMultipleMapRenameCommand = async (
+    parameters: MultipleMapRenameRequestParameters
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MultipleMapRename}`,
+        {
+            action: "rename_map",
+            id: parameters.id,
+            name: parameters.name
+        }
+    );
+};
+
+export const sendMultipleMapRotateCommand = async (
+    parameters: MultipleMapRotateRequestParameters
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MultipleMapRotate}`,
+        {
+            action: "rotate_map",
+            id: parameters.id,
+            angle: parameters.angle
+        }
+    );
 };
 
 export const sendLocateCommand = async (): Promise<void> => {
@@ -789,6 +865,28 @@ export const sendSpeakerTestCommand = async (): Promise<void> => {
     await valetudoAPI.put(`/robot/capabilities/${Capability.SpeakerTest}`, {
         action: "play_test_sound",
     });
+};
+
+export const fetchSpeakerPlayAudioList = async (): Promise<AudioEntry[]> => {
+    return valetudoAPI
+        .get<AudioEntry[]>(
+            `/robot/capabilities/${Capability.SpeakerPlayAudio}`
+        )
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendSpeakerPlayAudioCommand = async (
+    id: string
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.SpeakerPlayAudio}`,
+        {
+            action: "play_audio",
+            id: id
+        }
+    );
 };
 
 export const fetchKeyLockState = async (): Promise<SimpleToggleState> => {

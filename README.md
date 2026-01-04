@@ -1,102 +1,223 @@
 <div align="center">
-    <img src="https://github.com/Hypfer/Valetudo/blob/master/assets/logo/valetudo_logo_with_name.svg" width="800" alt="valetudo">
-    <p align="center"><h2>Free your vacuum from the cloud</h2></p>
+    <img src="resources/docs/valetudo_plus_logo_with_name.svg" width="600" alt="Valetudo+">
+    <p align="center"><h2>Re-free your vacuum from the cloud</h2></p>
 </div>
 
-Valetudo is a cloud replacement for vacuum robots enabling local-only operation. It is not a custom firmware.<br/>
-Here's a diagram illustrating the core operation principle:
+> Fork of [Hypfer/Valetudo](github.com/Hypfer/Valetudo)
 
-[<img src="https://github.com/Hypfer/valetudo/raw/master/docs/_pages/general/img/operation_principle.png" height=450>](https://github.com/Hypfer/valetudo/raw/master/docs/_pages/general/img/operation_principle.png)
+Valetudo+ is a fork of Valetudo adding extra functionality I desired that was not offered by the original project. These changes were made initially for the Dreame X40 Ultra. In theory this project should work on any robot Valetudo works on but most of the new functionality will require a supported robot (more details below).
 
-You can think of it as a (quoting a user) "brain parasite" for the vendor firmware.
+When writing the extra functionality offered by this project I did my best to:
+- Make it as easy as possible to pull in changes from upstream in the future.
+- Stick to the patterns set in the original project wherever possible.
+- Avoid breaking compatibility with other robots even if they don't support some of the features added.
 
-This comes with pro's and con's, with the main pro being that we get to benefit from the hundreds of thousands of hours of
-R&D the vendors put into their firmwares, but without the cloud and account requirements.
+If you want the most polished experience possible I suggest that you stick with the upstream project, this fork has had far less testing and is almost certainly far less polished.
 
-As such, it protects your data through not sharing it with anyone by being fully local, saves you from in-app ads, upselling, sudden subscriptions
-and all the other fun enshittification tactics and playbooks.
+## Before reading on
 
-Valetudo aims to be a generic abstraction, providing a responsive webinterface that allows control of the robot.
-It can be used on phones, tablets as well as your desktop computer.
+If you decide to use anything from this fork and run into any issues please do **not** open any issues on the upstream repository and rather open them here. Valetudo exists thanks to the hard work of Hypfer and I don't want to cause him more headaches because of this forks existence.
 
-To integrate with other systems, it provides a REST-interface with inbuilt Swagger UI as documentation.
-Additionally, it integrates with Home Assistant and other smarthome systems using MQTT.
+> **Be warned**: Whilst this code works fine on my vacuum it may not work correctly on yours. Anything you use from this repository is at your own risk and if you break something I may or may not be able to help you. I am far less knowledgeable on the topic of robot vacuums than others and just simply happen to be a software developer who wanted to tweak a great bit of software.
 
-Being a generic abstraction, Valetudo won't be a "feature-complete" reimplementation of the vendor apps, as that would also
-mean inheriting all of their technical debt.
-It does however support everything you need to have a proper, modern, cloud-free robot vacuum.
+## Added features
 
-While being published under the Apache-2.0 license and clearly being FOSS, the governance and development model Valetudo operates under
-is to be understood as that of "Freeware with source available". It is evidently much more than that when it comes to the freedoms provided by true FOSS,
-but it is not the FOSS that only knows "community-driven" you might be used to from corporate co-option and come to expect when you read "FOSS".
+Currently new functionality is broken into 2 categories, functionality that should work on all robots and that which will only work on supported devices.
 
-For more information, check out the [newcomer guide](https://valetudo.cloud/pages/general/newcomer-guide.html),
-the [getting started guide](https://valetudo.cloud/pages/general/getting-started.html) 
-and also the docs in general at [https://valetudo.cloud](https://valetudo.cloud)
+Please read the supported devices section for more information.
 
-There, you will find a list of [supported robots](https://valetudo.cloud/pages/general/supported-robots.html).
+### All devices
+
+- HTTPS support with redirection from HTTP to HTTPS when enabled.
+- MQTT support for mop cleaning / drying.
+- Updated postboot script with iptables rules.
+- Various other small tweaks.
+
+### Some devices
+
+- Multiple map / floor capabilities.
+- Map rotation.
+- Segment clean order.
+- View robot camera stream in the UI (via go2rtc).
+- On-demand playback of custom audio.
+- MQTT support for map switching.
+- MQTT support for custom audio playback.
+- Exposed a few extra options.
+
+## Supported robots
+
+Below are the robots that the extra functionality offered is currently known to work on.
+
+Some of the functionality such as multiple map support will likely work on other Dreame robots but is currently only enabled for a few robots. If you wish to test it on your vacuum let me know and I can point you in the right direction to try it out.
+
+Please let me know if you have tested this on your robot and what you got working + if you encountered any issues.
+
+- Dreame X40 Ultra
+- Dreame X40 Master (Untested but similar to Ultra)
 
 ## Screenshots
 
-### Phone/Mobile
-<img width="360" src="https://github.com/user-attachments/assets/21b6cb92-43e8-4c49-b7f4-e15bedaab094" /> <img width="360" src="https://github.com/user-attachments/assets/e4b32931-1116-4d19-bece-e48746a89664" />
+<img width="32%" src="resources/docs/screenshots/robot_sidebar.png" /> <img width="32%" src="resources/docs/screenshots/hass_1.png" /> <img width="32%" src="resources/docs/screenshots/hass_2.png" />
+<img src="resources/docs/screenshots/map_options.png" />
+<img src="resources/docs/screenshots/manual_control.png" />
 
-<img width="360" src="https://github.com/user-attachments/assets/4fdad83d-3df1-4d24-929b-004ce6b3bff0" /> <img width="360" src="https://github.com/user-attachments/assets/422d54c8-6546-4616-9cd6-c1239be78c32" />
+## Installation
 
-### Tablet/Desktop
+Before following these steps it is expected that you have already rooted your vacuum and installed the upstream Valetudo as described by the [original documentation](https://valetudo.cloud/).
 
-<img width="1024" src="https://github.com/user-attachments/assets/28e7dea0-db0a-482b-92ba-8e9774b2416f" />
+### Part 1 (Valetudo+)
 
-<img width="1024" src="https://github.com/user-attachments/assets/f9217069-ee10-42f4-8897-0c90703201b7" />
+1. Get a copy of Valetudo+ from a release build or build your own following instructions under "Development"
+2. SCP the Valetudo+ binary to your robot
+3. Run `mkdir /data/valetudo`
+4. Move the `valetudo` binary into `/data/valetudo`
+5. If you have previously run upstream Valetudo be sure to move your config from `/data/valetudo_config.json` to the new `/data/valetudo` folder
 
-<img width="1024" src="https://github.com/user-attachments/assets/d7281e75-32c7-4a1e-a10b-95aef3b06a78" />
+### Part 2 (Valetudo+ HTTPS) [Optional]
 
+This project adds HTTPS support to Valetudo, if you wish to use it please follow these steps.
 
-## Valetudo is a garden
-This project is the hobby of some random guy on the internet. There is no intent to commercialize it, grow it
-or expand the target audience of it. In fact, there is intent to explicitly not do that.
+> **Please note**: I would never suggest exposing your vacuum directly to the internet, there are just too many security risks with doing so especially if you are using camera streaming support. A far better option would be to use a VPN into your internal network if you need external access to your vacuum.
 
-Think of Valetudo as a privately-owned public garden. You can visit it any time for free and enjoy it.
-You can spend time there, and you can bring an infinite amount of friends with you to enjoy it.
-You can walk the pathways built there. You can sit on some patch of grass and maybe watch a Duck or something.
-You can leave a tip in the tip jar at the entrance if you really enjoy it and want to support it flourish.
+1. You will need to acquire a custom certificate to enable HTTPS support. You can either generate a self signed certificate or use something like Let's Encrypt, there are plenty of tutorials online for doing this if you are unsure how.
+2. Copy the certificate and key to your robot and place them in `/data/valetudo` calling them `cert.crt` & `key.pem`. You can use custom names or put them in a different location if you desire but you will need to update the config to reflect this.
+3. Edit `/data/valetudo/valetudo_config.json` updating the following option:
 
-You can take inspiration from it and bring that home to your own garden, giving it a personal twist and adapting it as needed.
-You can even make friendly suggestions if you have a really good idea that ties into the vision that is already there.
+```
+webserver.https.enabled: true
+```
 
-But, at the end of the day, you must understand that it is still privately-owned. You're on someone else's property
-over which you have no power at all. You will have to show the necessary respect. And - most importantly - you need to
-understand that letting you into this garden is a gift and should be treated as such.
+Doing this will automatically enforce HTTPS redirection on the HTTP port.
 
-If you don't like this garden because you don't like how it's structured, or you feel like it's missing something, or maybe
-I choose the wrong flowers to plant over there that's fine. It's just not for you then. You can leave at any time.
+### Part 3 (Vaccumstreamer) [Optional]
 
-There is simply no ground to stand on to demand change to the garden. It doesn't matter if it would attract more people
-or if all the other gardens in town are doing something in a specific way. It doesn't matter if your idea of what gardens
-even are differs.<br/>
-This at the end of the day is simply private property with free public access as a gift to everyone.
+These steps adds camera streaming support to Valetudo. It is optional and the camera UI components will automatically be hidden if you choose not to use it.
 
-When it comes to software development, _everyone_ has access to infinite plots of undeveloped land that they can claim at any time.
-Therefore, a garden being build with a specific vision does not take away the ability for anyone else to build their own garden with a different vision.
+> **Please note**: The steps use precompiled binaries from the following projects, updated versions can be built / downloaded if required:
+> - https://github.com/tihmstar/vacuumstreamer/
+> - https://github.com/AlexxIT/go2rtc/
 
-## Further questions?
+1. Get a copy of streamer.tar.gz from a release build or build your own following instructions under "Development"
+2. SCP `streamer.tar.gz` to your robot
+3. Run `cd /data/valetudo`
+4. Move `streamer.tar.gz` into this directory and run `tar xzf streamer.tar.gz`
+5. Remove `streamer.tar.gz` as it is no longer needed
+6. Run `cd streamer`
+7. Run `cp -r /mnt/private/ mnt_private-copy`
+8. Run `touch mnt_private-copy/certificate.bin`
+9. Edit `go2rtc.yaml` to update the placeholder RTSP password
+10. Run `chmod +x video_monitor go2rtc`
 
-> [!IMPORTANT]  
-> Before asking/joining/interacting, remember that you're entering a workshop that - fueled by naive optimism - was made partially accessible to the public under strict conditions.
->
-> I hang out there in my free time, and, as any human, I'd like to spend my free time pleasantly and surrounded by people that understand and respect me.
-> Contrary to e.g. your workplace, where tolerating is all that is expected of you, understanding cannot be made optional in such a space, as the economics that allow it to exist would otherwise not work out.
+### Part 4 (Custom audio playback) [Optional]
 
-1. [dust_announce - Very low frequency updates about Valetudo and Rooting](https://t.me/dust_announce)
+These steps allow for on demand playback of custom audio files should it be desired. It is optional so you can skip these steps if you don't wish to use it.
 
-2. [Valetudo Telegram group](https://t.me/+2MsKV8kILxJhNDAy)
+1. Run `mkdir /data/valetudo/audio` (or let Valetudo create it on startup)
+2. Optionally run `cp /audio/{LANG}/* /data/valetudo/audio` to make the default robot audio files available for manual playback
+3. Custom audio files can now be added to `/data/valetudo/audio` as desired. They must be mono 16kHz `.ogg` files.
 
-3. [So you've been banned?](https://valetudo.cloud/pages/general/so-youve-been-banned.html)
+### Part 5 (Final configuration)
 
-Any other mediums such as IRC, Matrix or Reddit are unofficial channels not connected to the project and might contain incorrect or outdated information.
+These steps will update the `_root_postboot.sh` startup script on the vacuum.
 
+I suggest that you **test** the new commands being added to this script **before** applying it to the main script. This will ensure none of the commands will lock you out of your vacuum, especially the `iptables` rules.
 
-## Contributing
+> **Please note**: By default the iptables rules block access to mDNS. You can easily enable this again by uncommenting the line in the script, the same applies for any access you wish to disable - you can simply comment that line out!
 
-Make sure to familiarize yourself with the [./CONTRIBUTING.md](./CONTRIBUTING.md)
+1. Edit the file `/data/_root_postboot.sh` on your vacuum
+2. Update the file based on the files provided in `resources/postboot` in this project. The content of `extra.sh` should be appended to the end of the script and the old Valetudo startup command removed. There is an example for the Dreame X40 Ultra included in `example.sh`.
+3. Reboot the vacuum to test everything is working as expected
 
+## Development
+
+### Setup
+
+You will need a recent LTS version of Node installed before proceeding.
+
+1. Install dependencies `npm install`
+2. Run `npm run generate_code --workspace=backend`
+3. Run `npm run start:dev --workspace=backend` (this will error and exit)
+4. Edit the newly created `./local/valetudo/valetudo_config.json` as suggested:
+
+```
+embedded: false,
+robot.implementation: "MockValetudoRobot"
+webserver.port: 8080
+```
+
+It is also possible to create a specific configuration to connect remotely to the robot along the following lines:
+
+```
+"implementation": "RoborockS5ValetudoRobot",
+"implementationSpecificConfig": {
+  "ip": "192.168.xxx.robotIp",
+  "deviceId": 12345678,
+  "cloudSecret": "aBcdEfgh",
+  "localSecret": "123456788989074560w34aaffasf"
+}
+```
+
+Better instructions can be found here for doing this:
+https://valetudo.cloud/pages/development/building-and-modifying-valetudo.html
+
+### Running
+
+If you wish to run the code in development mode for testing you can run:
+
+```
+$ npm run watch --workspace=frontend
+$ npm run start:dev --workspace=backend
+```
+
+Running in this mode the frontend code will automatically rebuild following any code changes and refreshing the page will show changes. 
+
+Code changes to the backend are only applied after it is restarted.
+
+### Building
+
+Build for individual platforms:
+```
+$ npm run build:aarch64
+$ npm run build:armv7
+$ npm run build:armv7_lowmem
+```
+
+Build for all platforms at once:
+
+```
+$ npm run build
+```
+
+Build streamer.tar.gz:
+
+```
+$ npm run build:streamer
+```
+
+All builds can be found in the `build` directory.
+
+### Syncing with upstream
+
+#### Adding upstream
+
+```
+$ git remote add upstream https://github.com/Hypfer/Valetudo.git
+$ git fetch upstream
+```
+
+#### Update from upstream
+
+1. Pull from upstream branch
+```
+$ git fetch upstream
+$ git pull upstream master
+```
+2. Resolve any conflicts after the pull
+
+### Useful links
+
+Below are a few other resources I found helpful during development:
+
+- [De-clouding Dreame Robot Vacuums](https://anthony-zhang.me/blog/offline-robot-vacuum/)
+- [dreame-vacuum (HASS Integration)](https://github.com/Tasshack/dreame-vacuum/)
+- [dreame-w10-valetudo-fork](https://github.com/DeutscheKI/dreame-w10-valetudo-fork)

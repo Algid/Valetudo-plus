@@ -12,7 +12,7 @@ import {ActionButton} from "../../Styled";
 import VirtualWallClientStructure from "../../structures/client_structures/VirtualWallClientStructure";
 import NoGoAreaClientStructure from "../../structures/client_structures/NoGoAreaClientStructure";
 import NoMopAreaClientStructure from "../../structures/client_structures/NoMopAreaClientStructure";
-import RestrictedZoneClientStructure from "../../structures/client_structures/RestrictedZoneClientStructure";
+import BaseZoneClientStructure from "../../structures/client_structures/BaseZoneClientStructure";
 import {PointCoordinates} from "../../utils/types";
 import {
     Save as SaveIcon,
@@ -83,7 +83,7 @@ const VirtualRestrictionActions = (
         }
         const restrictedZones : Array<ValetudoRestrictedZone> = [];
 
-        [...noGoAreas, ...noMopAreas].forEach((rZ : RestrictedZoneClientStructure) => {
+        [...noGoAreas, ...noMopAreas].forEach((rZ : BaseZoneClientStructure) => {
             let type : ValetudoRestrictedZoneType = ValetudoRestrictedZoneType.Regular;
 
             if (rZ.type === NoMopAreaClientStructure.TYPE) {

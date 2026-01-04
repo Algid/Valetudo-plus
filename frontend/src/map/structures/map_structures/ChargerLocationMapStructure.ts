@@ -13,7 +13,7 @@ class ChargerLocationMapStructure extends MapStructure {
         super(x0, y0);
     }
 
-    draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number): void {
+    draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number, rotationRads: number): void {
         const ctx = ctxWrapper.getContext();
         const p0 = new DOMPoint(this.x0, this.y0).matrixTransform(transformationMatrixToScreenSpace);
 
@@ -22,12 +22,42 @@ class ChargerLocationMapStructure extends MapStructure {
             height: considerHiDPI(img.height) / (considerHiDPI(4.5) / scaleFactor)
         };
 
-        ctx.drawImage(
+        const rotateCharger = (source: CanvasImageSource, size: {width: number, height: number}) => {
+            const imgWidth = Math.round(size.width);
+            const imgHeight = Math.round(size.height);
+
+            // Leave room for rotation if required
+            const canvasWidth = imgWidth * 1.5;
+            const canvasHeight = imgHeight * 1.5;
+
+            const canvasimg = document.createElement("canvas");
+            canvasimg.width = canvasWidth;
+            canvasimg.height = canvasHeight;
+            const ctximg = canvasimg.getContext("2d");
+
+            if (ctximg) {
+                ctximg.translate(canvasWidth / 2, canvasHeight / 2);
+                ctximg.rotate(rotationRads);
+                ctximg.translate(-canvasWidth / 2, -canvasHeight / 2);
+
+                ctximg.translate((canvasWidth / 2) - (imgWidth / 2), (canvasHeight / 2) - (imgHeight / 2));
+                ctximg.drawImage(source, 0, 0, imgWidth, imgHeight);
+            }
+
+            return canvasimg;
+        };
+
+        const rotatedImg = rotateCharger(
             this.getOptimizedImage(img, scaledSize.width, scaledSize.height),
-            p0.x - scaledSize.width / 2,
-            p0.y - scaledSize.height / 2,
-            scaledSize.width,
-            scaledSize.height
+            scaledSize,
+        );
+
+        ctx.drawImage(
+            rotatedImg,
+            p0.x - rotatedImg.width / 2,
+            p0.y - rotatedImg.height / 2,
+            rotatedImg.width,
+            rotatedImg.height
         );
     }
 }

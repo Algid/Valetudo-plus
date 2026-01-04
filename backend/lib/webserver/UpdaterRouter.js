@@ -70,9 +70,9 @@ class UpdaterRouter {
                             implementationSpecificConfig: {}
                         };
                         break;
-                    case "github_nightly":
+                    case "github_prerelease":
                         newUpdateProviderConfig = {
-                            type: "github_nightly",
+                            type: "github_prerelease",
                             implementationSpecificConfig: {}
                         };
 

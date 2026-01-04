@@ -25,11 +25,8 @@ const Dock = (): React.ReactElement => {
         data: dockStatus,
         isPending: isDockStatusPending,
     } = useRobotAttributeQuery(RobotAttributeClass.DockStatusState);
-    const {
-        data: attachments,
-        isPending: isAttachmentPending,
-    } = useRobotAttributeQuery(RobotAttributeClass.AttachmentState);
-    const isPending = isRobotStatusPending || isDockStatusPending || isAttachmentPending;
+
+    const isPending = isRobotStatusPending || isDockStatusPending;
 
     const StyledIcon = styled(Icon)(({ theme }) => {
         return {
@@ -68,9 +65,6 @@ const Dock = (): React.ReactElement => {
     const body = React.useMemo(() => {
         const dockStatusIsRelevant = mopDockCleanTriggerSupported || mopDockDryTriggerSupported;
         const commandIsExecuting = emptyIsExecuting || mopDockCleanCommandExecuting || mopDockDryCommandExecuting;
-        const mopAttachmentAttached = attachments?.find(a => {
-            return a.type === "mop";
-        })?.attached === true;
 
         if (isPending) {
             return <></>;
@@ -94,7 +88,7 @@ const Dock = (): React.ReactElement => {
                         mopDockCleanTriggerSupported &&
                         <Grid2 sx={{flex: 1, minWidth: "min-content"}}>
                             <Button
-                                disabled={feedbackPending || commandIsExecuting || !["idle", "cleaning", "pause"].includes(dockState) || robotState !== "docked" || !mopAttachmentAttached}
+                                disabled={feedbackPending || commandIsExecuting || !["idle", "cleaning", "pause"].includes(dockState) || robotState !== "docked"}
                                 variant="outlined"
                                 size="medium"
                                 color="inherit"
@@ -114,7 +108,7 @@ const Dock = (): React.ReactElement => {
                         mopDockDryTriggerSupported &&
                         <Grid2 sx={{flex: 1, minWidth: "min-content"}}>
                             <Button
-                                disabled={feedbackPending || commandIsExecuting || !["idle", "drying", "pause"].includes(dockState) || robotState !== "docked" || !mopAttachmentAttached}
+                                disabled={feedbackPending || commandIsExecuting || !["idle", "drying", "pause"].includes(dockState) || robotState !== "docked"}
                                 variant="outlined"
                                 size="medium"
                                 color="inherit"
@@ -152,7 +146,6 @@ const Dock = (): React.ReactElement => {
         );
     }, [
         StyledIcon,
-        attachments,
         dockState,
         dockStatus,
         emptyIsExecuting,

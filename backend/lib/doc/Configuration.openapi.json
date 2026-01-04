@@ -30,17 +30,25 @@
             "additionalProperties": false,
             "required": [
               "port",
-              "basicAuth"
+              "https",
+              "basicAuth",
+              "streamerProxy"
             ],
             "properties": {
               "port": {
                 "type": "number"
+              },
+              "https": {
+                "$ref": "#/components/schemas/HttpsConfigDTO"
               },
               "basicAuth": {
                 "$ref": "#/components/schemas/BasicAuthConfigDTO"
               },
               "blockExternalAccess": {
                 "type": "boolean"
+              },
+              "streamerProxy": {
+                "$ref": "#/components/schemas/StreamerConfigDTO"
               }
             }
           },
@@ -275,10 +283,12 @@
             "items": {
               "type": "string",
               "enum": [
+                "MultipleMapCapability",
                 "ConsumableMonitoringCapability",
                 "CurrentStatisticsCapability",
                 "TotalStatisticsCapability",
                 "SpeakerVolumeControlCapability",
+                "SpeakerPlayAudioCapability",
                 "KeyLockCapability",
                 "ObstacleAvoidanceControlCapability",
                 "PetObstacleAvoidanceControlCapability",
@@ -286,6 +296,30 @@
                 "CarpetSensorModeControlCapability"
               ]
             }
+          }
+        }
+      },
+      "HttpsConfigDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "enabled",
+          "port",
+          "certSubPath",
+          "keySubPath"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "port": {
+            "type": "number"
+          },
+          "certSubPath": {
+            "type": "string"
+          },
+          "keySubPath": {
+            "type": "string"
           }
         }
       },
@@ -306,6 +340,22 @@
           },
           "password": {
             "type": "string"
+          }
+        }
+      },
+      "StreamerConfigDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url",
+          "timeoutMs"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "timeoutMs": {
+            "type": "number"
           }
         }
       },
@@ -373,7 +423,7 @@
                 "type": "string",
                 "enum": [
                   "github",
-                  "github_nightly"
+                  "github_prerelease"
                 ]
               },
               "implementationSpecificConfig": {

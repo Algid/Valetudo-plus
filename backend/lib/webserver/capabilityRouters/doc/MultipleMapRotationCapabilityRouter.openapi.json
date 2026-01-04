@@ -1,0 +1,61 @@
+{
+  "/api/v2/robot/capabilities/MultipleMapRotateCapability": {
+    "put": {
+      "tags": [
+        "MultipleMapRotateCapability"
+      ],
+      "summary": "Rotate map",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "rotate_map"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "angle": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
+  "/api/v2/robot/capabilities/MultipleMapRotateCapability/properties": {
+    "get": {
+      "tags": [
+        "MultipleMapRotateCapability"
+      ],
+      "summary": "Get various capability-related properties",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

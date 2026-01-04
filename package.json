@@ -1,6 +1,6 @@
 {
   "name": "valetudo",
-  "version": "2026.01.0",
+  "version": "0.1.0",
   "description": "Self-contained control webinterface for vacuum robots",
   "license": "Apache-2.0",
   "engines": {
@@ -12,7 +12,11 @@
     "frontend"
   ],
   "scripts": {
-    "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "build": "npm run build_openapi_schema && npm run build --workspace=frontend && npm run build --workspace=backend",
+    "build:aarch64": "npm run build_openapi_schema && npm run build --workspace=frontend && npm run build_aarch64 --workspace=backend",
+    "build:armv7": "npm run build_openapi_schema && npm run build --workspace=frontend && npm run build_armv7 --workspace=backend",
+    "build:armv7_lowmem": "npm run build_openapi_schema && npm run build --workspace=frontend && npm run build_armv7_lowmem --workspace=backend",
+    "build:streamer": "cd resources && tar czf ../build/streamer.tar.gz streamer",
     "lint_all": "npm run lint --workspace=frontend && npm run lint --workspace=backend",
     "ts-check_all": "npm run ts-check --workspace=frontend && npm run ts-check --workspace=backend",
     "build_docs": "node ./util/generate_robot_docs.js && node ./util/generate_mqtt_docs.js",

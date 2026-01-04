@@ -4,6 +4,12 @@ const ValetudoUpdateProvider = require("./ValetudoUpdateProvider");
 const {get} = require("../UpdaterUtils");
 
 class GithubValetudoUpdateProvider extends ValetudoUpdateProvider {
+    constructor(allowPrerelease = false) {
+        super();
+
+        this.allowPrerelease = allowPrerelease;
+    }
+
     /**
      * @return {Promise<Array<import("./ValetudoRelease")>>}
      */
@@ -76,7 +82,15 @@ class GithubValetudoUpdateProvider extends ValetudoUpdateProvider {
      */
     parseReleaseOverviewApiResponse(data) {
         const releases = data.filter(rR => {
-            return rR.prerelease === false && rR.draft === false;
+            if (!this.allowPrerelease && rR.prerelease) {
+                return false;
+            }
+
+            if (rR.draft) {
+                return false;
+            }
+
+            return true;
         }).map(rR => {
             return new ValetudoRelease({
                 version: rR.tag_name,
@@ -99,7 +113,7 @@ class GithubValetudoUpdateProvider extends ValetudoUpdateProvider {
 
 GithubValetudoUpdateProvider.TYPE = "github";
 
-GithubValetudoUpdateProvider.RELEASES_URL = "https://api.github.com/repos/Hypfer/Valetudo/releases";
+GithubValetudoUpdateProvider.RELEASES_URL = "https://api.github.com/repos/Algid/Valetudo-plus/releases";
 GithubValetudoUpdateProvider.MANIFEST_NAME = "valetudo_release_manifest.json";
 
 

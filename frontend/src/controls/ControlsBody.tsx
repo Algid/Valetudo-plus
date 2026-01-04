@@ -1,4 +1,4 @@
-import {Grid2} from "@mui/material";
+import {Box, Grid2, Paper} from "@mui/material";
 import {
     AppRegistration as OperationModeIcon,
 } from "@mui/icons-material";
@@ -12,11 +12,14 @@ import CurrentStatistics from "./CurrentStatistics";
 import Attachments from "./Attachments";
 import {FanSpeedMediumIcon, WaterGradeLowIcon} from "../components/CustomIcons";
 import React from "react";
+import CameraStream from "./CameraStream";
+import MultipleMap from "./MultipleMap";
 
 
 const ControlsBody = (): React.ReactElement => {
     const [
         basicControls,
+        multipleMapSupported,
         fanSpeed,
         waterControl,
         operationMode,
@@ -26,6 +29,7 @@ const ControlsBody = (): React.ReactElement => {
         currentStatistics,
     ] = useCapabilitiesSupported(
         Capability.BasicControl,
+        Capability.MultipleMap,
         Capability.FanSpeedControl,
         Capability.WaterUsageControl,
         Capability.OperationModeControl,
@@ -39,12 +43,19 @@ const ControlsBody = (): React.ReactElement => {
         data: robotInformation,
     } = useRobotInformationQuery();
 
+    const [cameraVisible, setCameraVisible] = React.useState(false);
 
     return (
         <Grid2 container spacing={1.5} direction="column" sx={{userSelect: "none"}}>
-            {basicControls && <BasicControls />}
+            <Paper style={{display: !cameraVisible ? "none" : undefined}}>
+                <Box px={1.5} py={1.5}>
+                    <CameraStream iframeStyle={{minHeight: "25vh"}} setVisible={setCameraVisible} />
+                </Box>
+            </Paper>
 
             <RobotStatus />
+
+            {basicControls && <BasicControls />}
 
             {operationMode && (
                 <PresetSelectionControl
@@ -76,6 +87,8 @@ const ControlsBody = (): React.ReactElement => {
                     icon={<WaterGradeLowIcon fontSize="small" />}
                 />
             )}
+
+            {multipleMapSupported && <MultipleMap />}
 
             {
                 (triggerEmptySupported || mopDockCleanTriggerSupported || mopDockDryTriggerSupported) &&

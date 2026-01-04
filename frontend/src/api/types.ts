@@ -21,10 +21,15 @@ export enum Capability {
     ManualControl = "ManualControlCapability",
     HighResolutionManualControl = "HighResolutionManualControlCapability",
     MapReset = "MapResetCapability",
+    MapSegmentCleanOrder = "MapSegmentCleanOrderCapability",
     MapSegmentEdit = "MapSegmentEditCapability",
     MapSegmentRename = "MapSegmentRenameCapability",
     MapSegmentMaterialControl = "MapSegmentMaterialControlCapability",
     MapSegmentation = "MapSegmentationCapability",
+    MultipleMap = "MultipleMapCapability",
+    MultipleMapDelete = "MultipleMapDeleteCapability",
+    MultipleMapRename = "MultipleMapRenameCapability",
+    MultipleMapRotate = "MultipleMapRotateCapability",
     MapSnapshot = "MapSnapshotCapability",
     MappingPass = "MappingPassCapability",
     MopDockMopWashTemperatureControl = "MopDockMopWashTemperatureControlCapability",
@@ -38,6 +43,7 @@ export enum Capability {
     MopDockMopAutoDryingControl = "MopDockMopAutoDryingControlCapability",
     OperationModeControl = "OperationModeControlCapability",
     PersistentMapControl = "PersistentMapControlCapability",
+    SpeakerPlayAudio = "SpeakerPlayAudioCapability",
     SpeakerTest = "SpeakerTestCapability",
     SpeakerVolumeControl = "SpeakerVolumeControlCapability",
     TotalStatistics = "TotalStatisticsCapability",
@@ -91,6 +97,12 @@ export interface MapSegmentationProperties {
 export interface Segment {
     id: string;
     name?: string;
+}
+
+export interface MapEntry {
+    id: string;
+    name: string;
+    active: boolean;
 }
 
 export interface RobotInformation {
@@ -191,6 +203,16 @@ export interface MapSegmentMaterialControlRequestParameters {
 
 export interface MapSegmentMaterialControlProperties {
     supportedMaterials: Array<MapSegmentMaterial>;
+}
+
+export interface MultipleMapRenameRequestParameters {
+    id: string;
+    name: string;
+}
+
+export interface MultipleMapRotateRequestParameters {
+    id: string;
+    angle: number;
 }
 
 export type ConsumableType = "filter" | "brush" | "mop" | "detergent" | "bin" | "cleaning" ;
@@ -424,6 +446,11 @@ export interface SpeakerVolumeState {
     volume: number;
 }
 
+export interface AudioEntry {
+    id: string;
+    name: string;
+}
+
 export interface VoicePackManagementStatus {
     currentLanguage: string;
     operationStatus: {
@@ -538,7 +565,7 @@ export interface CombinedVirtualRestrictionsProperties {
 }
 
 export interface UpdaterConfiguration {
-    updateProvider: "github" | "github_nightly";
+    updateProvider: "github" | "github_prerelease";
 }
 
 export interface UpdaterStateMetaData {

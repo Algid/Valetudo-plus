@@ -4,10 +4,12 @@ import VoicePackManagement from "./VoicePackManagement";
 import DoNotDisturb from "./DoNotDisturb";
 import {CapabilityContainer} from "./CapabilityLayout";
 import PaperContainer from "../../components/PaperContainer";
+import PlayAudio from "./PlayAudio";
 
 const SystemRobotOptions = (): React.ReactElement => {
     const components = [
         Speaker,
+        PlayAudio,
         VoicePackManagement,
         DoNotDisturb,
     ];

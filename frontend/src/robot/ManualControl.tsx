@@ -9,6 +9,8 @@ import {
     Typography,
     styled,
     Skeleton,
+    Card,
+    CardContent,
 } from "@mui/material";
 import {
     Capability,
@@ -32,6 +34,7 @@ import {
 import PaperContainer from "../components/PaperContainer";
 import { Joystick } from "react-joystick-component";
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick";
+import CameraStream from "../controls/CameraStream";
 
 const SideButton = styled(Button)({
     width: "30%",
@@ -301,6 +304,8 @@ const ManualControl = (): React.ReactElement => {
         Capability.ManualControl
     );
 
+    const [cameraVisible, setCameraVisible] = React.useState(false);
+
     let controlComponent;
     if (highResSupported) {
         controlComponent = <HighResolutionManualControlInternal />;
@@ -312,7 +317,29 @@ const ManualControl = (): React.ReactElement => {
 
     return (
         <PaperContainer>
-            {controlComponent}
+            <Grid2 container spacing={2} direction="column" sx={{userSelect: "none"}}>
+                <Card
+                    style={{display: !cameraVisible ? "none" : undefined}}
+                    sx={{boxShadow: 3}}
+                >
+                    <CardContent style={{paddingBottom: "16px"}}>
+                        <CameraStream iframeStyle={{minHeight: "25vh"}} setVisible={setCameraVisible} />
+                    </CardContent>
+                </Card>
+
+                {cameraVisible && (
+                    <Card
+                        sx={{boxShadow: 3}}
+                    >
+                        <CardContent style={{paddingBottom: "16px"}}>
+                            {controlComponent}
+                        </CardContent>
+                    </Card>
+                )}
+                {!cameraVisible && (
+                    controlComponent
+                )}
+            </Grid2>
         </PaperContainer>
     );
 };

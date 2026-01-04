@@ -135,6 +135,12 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
         window.addEventListener("resize", this.resizeListener);
         document.addEventListener("visibilitychange", this.visibilityStateChangeListener);
 
+        this.redrawMap();
+    }
+
+    protected redrawMap() : void {
+        this.ctxWrapper.resetTransform();
+
         const boundingBox = {
             minX: this.props.rawMap.size.x / this.props.rawMap.pixelSize,
             minY: this.props.rawMap.size.y / this.props.rawMap.pixelSize,
@@ -157,11 +163,16 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
             }
         });
 
+        const rotatedDims = this.getCanvasRotatedDims();
 
         const initialScalingFactor = Math.min(
-            this.canvas.width / ((boundingBox.maxX - boundingBox.minX)*1.1),
-            this.canvas.height / ((boundingBox.maxY - boundingBox.minY)*1.1)
+            rotatedDims.width / ((boundingBox.maxX - boundingBox.minX)*1.1),
+            rotatedDims.height / ((boundingBox.maxY - boundingBox.minY)*1.1)
         );
+
+        this.ctxWrapper.translate(this.canvas.width / 2, this.canvas.height / 2);
+        this.ctxWrapper.rotate(rotatedDims.rotationRads);
+        this.ctxWrapper.translate(-this.canvas.width / 2, -this.canvas.height / 2);
 
         const initialxOffset = (this.canvas.width - (boundingBox.maxX - boundingBox.minX)*initialScalingFactor) / 2;
         const initialyOffset = (this.canvas.height - (boundingBox.maxY - boundingBox.minY)*initialScalingFactor) / 2;
@@ -180,6 +191,13 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
     }
 
     componentDidUpdate(prevProps: Readonly<MapProps>, prevState: Readonly<MapState>): void {
+        if (
+            prevProps.rawMap.metaData.id !== this.props.rawMap.metaData.id ||
+            prevProps.rawMap.metaData.rotation !== this.props.rawMap.metaData.rotation
+        ) {
+            this.redrawMap();
+        }
+
         if (prevProps.rawMap.metaData.nonce !== this.props.rawMap.metaData.nonce) {
             this.onMapUpdate();
 
@@ -333,12 +351,15 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
                 this.ctxWrapper.save();
                 this.ctxWrapper.setTransform(1, 0, 0, 1, 0, 0);
 
+                const rotatedDims = this.getCanvasRotatedDims();
+
                 this.structureManager.getMapStructures().forEach(s => {
                     s.draw(
                         this.ctxWrapper,
                         transformationMatrixToScreenSpace,
                         this.currentScaleFactor,
-                        this.structureManager.getPixelSize()
+                        this.structureManager.getPixelSize(),
+                        rotatedDims.rotationRads
                     );
                 });
 
@@ -347,7 +368,8 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
                         this.ctxWrapper,
                         transformationMatrixToScreenSpace,
                         this.currentScaleFactor,
-                        this.structureManager.getPixelSize()
+                        this.structureManager.getPixelSize(),
+                        rotatedDims.rotationRads
                     );
                 });
 
@@ -659,6 +681,21 @@ abstract class BaseMap<P, S> extends React.Component<P & MapProps, S & MapState 
 
         //Order might be important here but I've never tested that
         this.canvas.addEventListener("wheel", this.onScroll.bind(this), false);
+    }
+
+    protected getCanvasRotatedDims() {
+        const rotationRads = (this.props.rawMap.metaData.rotation ?? 0) * (Math.PI / 180);
+
+        const sin = Math.abs(Math.sin(rotationRads));
+        const cos = Math.abs(Math.cos(rotationRads));
+        const rotatedWidth = Math.floor(this.canvas.width * cos + this.canvas.height * sin);
+        const rotatedHeight = Math.floor(this.canvas.height * cos + this.canvas.width * sin);
+
+        return {
+            rotationRads: rotationRads,
+            width: rotatedWidth,
+            height: rotatedHeight
+        };
     }
 
     /**

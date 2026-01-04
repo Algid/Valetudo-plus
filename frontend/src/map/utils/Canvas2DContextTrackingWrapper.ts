@@ -25,6 +25,12 @@ export class Canvas2DContextTrackingWrapper {
         return DOMMatrix.fromMatrix(this.currentTransform);
     }
 
+    resetTransform() {
+        this.currentTransform = new DOMMatrix();
+
+        this.ctx.resetTransform();
+    }
+
     save() {
         this.savedTransforms.push(this.getTransform());
 
@@ -84,7 +90,7 @@ export class Canvas2DContextTrackingWrapper {
 
     getScaleFactor() {
         return {
-            scaleX: Math.sqrt(this.currentTransform.a * this.currentTransform.a + this.currentTransform.b + this.currentTransform.b),
+            scaleX: Math.sqrt(this.currentTransform.a * this.currentTransform.a + this.currentTransform.b * this.currentTransform.b),
             scaleY: Math.sqrt(this.currentTransform.c * this.currentTransform.c + this.currentTransform.d * this.currentTransform.d)
         };
     }

@@ -17,7 +17,7 @@ class RobotPositionMapStructure extends MapStructure {
         this.angle = angle;
     }
 
-    draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number): void {
+    draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number, rotationRads: number): void {
         const scaledSize = {
             width: considerHiDPI(img.width) / (considerHiDPI(4.5) / scaleFactor),
             height: considerHiDPI(img.height) / (considerHiDPI(4.5) / scaleFactor)
@@ -38,7 +38,7 @@ class RobotPositionMapStructure extends MapStructure {
 
             if (ctximg) {
                 ctximg.translate(canvasWidth / 2, canvasHeight / 2);
-                ctximg.rotate(angle * Math.PI / 180);
+                ctximg.rotate((angle * Math.PI / 180) + rotationRads);
                 ctximg.translate(-canvasWidth / 2, -canvasHeight / 2);
                 ctximg.drawImage(source, 0, 0, canvasWidth, canvasHeight);
             }

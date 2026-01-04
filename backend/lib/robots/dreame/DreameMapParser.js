@@ -39,6 +39,10 @@ class DreameMapParser {
         const entities = [];
         const metaData = {};
 
+        if (mapType === MAP_DATA_TYPES.RISM) {
+            metaData.id = `${parsedHeader.id}`;
+        }
+
         if (parsedHeader.robot_position.valid === true) {
             entities.push(
                 new mapEntities.PointMapEntity({
@@ -74,6 +78,7 @@ class DreameMapParser {
             const imageData = buf.subarray(HEADER_SIZE, HEADER_SIZE + parsedHeader.width * parsedHeader.height);
             const activeSegmentIds = [];
             const segmentNames = {};
+            const segmentCleanOrder = {};
             const segmentMaterials = {};
             let additionalData = {};
 
@@ -93,6 +98,14 @@ class DreameMapParser {
                 Object.keys(additionalData.seg_inf).forEach(segmentId => {
                     if (additionalData.seg_inf[segmentId].name) {
                         segmentNames[segmentId] = Buffer.from(additionalData.seg_inf[segmentId].name, "base64").toString("utf8");
+                    }
+
+                    if (additionalData.cleanareaorder !== undefined && Array.isArray(additionalData.cleanareaorder)) {
+                        const foundEntry = additionalData.cleanareaorder.find(entry => Object.keys(entry).includes(segmentId));
+
+                        if (foundEntry !== undefined) {
+                            segmentCleanOrder[segmentId] = foundEntry[segmentId];
+                        }
                     }
 
                     if (additionalData.seg_inf[segmentId].material !== undefined) {
@@ -121,7 +134,7 @@ class DreameMapParser {
                 });
             }
 
-            layers.push(...DreameMapParser.PARSE_IMAGE(parsedHeader, activeSegmentIds, segmentNames, segmentMaterials, imageData, mapType));
+            layers.push(...DreameMapParser.PARSE_IMAGE(parsedHeader, activeSegmentIds, segmentNames, segmentCleanOrder, segmentMaterials, imageData, mapType));
 
             /**
              * Contains saved map data such as virtual restrictions as well as segments
@@ -175,6 +188,11 @@ class DreameMapParser {
                                         return eL.metaData.segmentId === l.metaData.segmentId;
                                     }).metaData.name = l.metaData.name;
                                 }
+                                if (l.metaData.cleanOrder) {
+                                    layers.find(eL => {
+                                        return eL.metaData.segmentId === l.metaData.segmentId;
+                                    }).metaData.cleanOrder = l.metaData.cleanOrder;
+                                }
                                 if (l.metaData.material) {
                                     layers.find(eL => {
                                         return eL.metaData.segmentId === l.metaData.segmentId;
@@ -192,6 +210,13 @@ class DreameMapParser {
 
                     if (rismResult.metaData?.dreamePendingMapChange !== undefined) {
                         metaData.dreamePendingMapChange = rismResult.metaData.dreamePendingMapChange;
+                    } else {
+                        // The map ID probably cannot be trusted if we are pending a map change
+                        metaData.id = rismResult.metaData.id;
+                    }
+
+                    if (rismResult.metaData?.rotation !== undefined) {
+                        metaData.rotation = rismResult.metaData.rotation;
                     }
                 }
             }
@@ -287,6 +312,10 @@ class DreameMapParser {
                     other values TBD
                  */
                 metaData.dreamePendingMapChange = true;
+            }
+
+            if (additionalData.mra !== undefined) {
+                metaData.rotation = Number(additionalData.mra);
             }
 
             if (additionalData.ai_obstacle?.length > 0) {
@@ -432,7 +461,7 @@ class DreameMapParser {
         return parsedHeader;
     }
 
-    static PARSE_IMAGE(parsedHeader, activeSegmentIds, segmentNames, segmentMaterials, buf, mapType) {
+    static PARSE_IMAGE(parsedHeader, activeSegmentIds, segmentNames, segmentCleanOrder, segmentMaterials, buf, mapType) {
         const floorPixels = [];
         const wallPixels = [];
         const segments = {};
@@ -547,6 +576,10 @@ class DreameMapParser {
 
             if (segmentNames[segmentId]) {
                 metaData.name = segmentNames[segmentId];
+            }
+
+            if (segmentCleanOrder[segmentId]) {
+                metaData.cleanOrder = segmentCleanOrder[segmentId];
             }
 
             if (segmentMaterials[segmentId]) {

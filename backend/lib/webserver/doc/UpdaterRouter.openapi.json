@@ -95,7 +95,7 @@
                     "type": "string",
                     "enum": [
                       "github",
-                      "github_nightly"
+                      "github_prerelease"
                     ]
                   }
                 }
@@ -120,7 +120,7 @@
                   "type": "string",
                   "enum": [
                     "github",
-                    "github_nightly"
+                    "github_prerelease"
                   ]
                 }
               }
@@ -132,10 +132,10 @@
                   "updateProvider": "github"
                 }
               },
-              "nightly":{
-                "description": "Use the Github Nightly update provider",
+              "prerelease":{
+                "description": "Use the Github Pre-release update provider",
                 "value": {
-                  "updateProvider": "github_nightly"
+                  "updateProvider": "github_prerelease"
                 }
               }
             }

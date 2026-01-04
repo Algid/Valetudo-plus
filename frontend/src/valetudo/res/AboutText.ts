@@ -1,5 +1,11 @@
 export const AboutText = `
-Valetudo is made, managed, maintained and more by me,
+Valetudo+ is developed by <a href="https://github.com/Algid" rel="noopener" target="_blank">Algid</a>.
+
+This project would not exist without Valetudo, read more information about it below.
+
+### Upstream
+
+Valetudo is originally made, managed, maintained and more by
 <a href="https://hypfer.de" rel="noopener" target="_blank">Sören Beye</a>, with occasional contributions by
 <a href="https://github.com/Hypfer/Valetudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.
 It would not exist without the ongoing work of <a href="https://dontvacuum.me/" rel="noopener" target="_blank">Dennis Giese</a>, 
@@ -13,7 +19,7 @@ We're all standing on the shoulders of giants. (<a href="https://xkcd.com/2347/"
 
 ### License
 
-Valetudo is licensed under <a href="https://github.com/Hypfer/Valetudo/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 license</a>,
+Valetudo is licensed under <a href="https://github.com/Algid/Valetudo-plus/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 license</a>,
 but I will spare you the boring wall of text that you won't read anyways, as honestly, the license doesn't really matter that much.
 All relevant open-source licenses basically boil down to "no warranty/no liability" and "don't act in bad faith" with various ways of trying to enforce the latter.
 

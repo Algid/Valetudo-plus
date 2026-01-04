@@ -1,8 +1,10 @@
+const auth = require("basic-auth");
 const basicAuth = require("express-basic-auth");
 const compression = require("compression");
 const dynamicMiddleware = require("express-dynamic-middleware");
 const express = require("express");
 const http = require("http");
+const https = require("https");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerValidation = require("openapi-validator-middleware");
@@ -11,6 +13,7 @@ const listEndpoints = require("express-list-endpoints");
 
 const Logger = require("../Logger");
 
+const env = require("../res/env");
 const notFoundPages = require("./res/404");
 
 const Middlewares = require("./middlewares");
@@ -23,6 +26,7 @@ const MQTTRouter = require("./MQTTRouter");
 const NetworkAdvertisementManagerRouter = require("./NetworkAdvertisementManagerRouter");
 const NTPClientRouter = require("./NTPClientRouter");
 const SSDPRouter = require("./SSDPRouter");
+const StreamerRouter = require("./StreamerRouter");
 const SystemRouter = require("./SystemRouter");
 const TimerRouter = require("./TimerRouter");
 const Tools = require("../utils/Tools");
@@ -54,6 +58,7 @@ class WebServer {
         this.webserverConfig = this.config.get("webserver");
 
         this.port = this.webserverConfig.port;
+        this.httpsPort = this.webserverConfig.https.port;
 
         this.basicAuthInUse = false; //TODO: redo auth
 
@@ -96,7 +101,40 @@ class WebServer {
             }
         });
 
-        const server = http.createServer(this.app);
+        let server = undefined;
+        let httpsServer = undefined;
+
+        if (this.webserverConfig.https.enabled) {
+            httpsServer = https.createServer({
+                cert: fs.readFileSync(path.join(process.env[env.DataPath], this.webserverConfig.https.certSubPath)),
+                key: fs.readFileSync(path.join(process.env[env.DataPath], this.webserverConfig.https.keySubPath)),
+            }, this.app);
+
+            // Add https redirect
+            const altApp = express();
+            altApp.use(function(req, res) {
+                res.redirect("https://" + req.headers.host + req.url);
+            });
+            server = http.createServer(altApp);
+        } else {
+            server = http.createServer(this.app);
+        }
+
+        // Apply basic auth to primary server on WS upgrade
+        (httpsServer ?? server).on("upgrade", (req, socket) => {
+            // Auth disabled
+            if (!this.basicAuthInUse) {
+                return;
+            }
+
+            const authCreds = auth(req);
+            if (authCreds && this.performAuthCheck(authCreds.name, authCreds.pass)) {
+                return;
+            }
+
+            Logger.info(`WS upgrade credentials invalid for ${req.url}`);
+            socket.end("HTTP/1.1 401 Unauthorized");
+        });
 
         this.loadApiSpec();
         this.validator = function superBasicValidationMiddleware(req, res, next) {
@@ -145,6 +183,8 @@ class WebServer {
 
         this.app.use("/_ssdp/", new SSDPRouter({config: this.config, robot: this.robot, valetudoHelper: this.valetudoHelper}).getRouter());
 
+        this.app.use("/streamer/", new StreamerRouter({config: this.config}).getRouter());
+
         this.app.use(express.static(path.join(__dirname, "../../..", "frontend/build")));
 
         this.app.get("/api/v2", (req, res) => {
@@ -166,7 +206,6 @@ class WebServer {
             res.json(endpointsMap);
         });
 
-
         this.robot.initModelSpecificWebserverRoutes(this.app);
 
 
@@ -184,11 +223,27 @@ class WebServer {
             res.status(404).send(Tools.GET_RANDOM_ARRAY_ELEMENT(Object.values(notFoundPages)));
         });
 
+        if (httpsServer) {
+            httpsServer.listen(this.httpsPort, function() {
+                Logger.info("Webserver HTTPS running on port", self.httpsPort);
+            });
+        }
+
         server.listen(this.port, function() {
             Logger.info("Webserver running on port", self.port);
         });
 
         this.webserver = server;
+        this.webserverHttps = httpsServer;
+    }
+
+    performAuthCheck(username, password) {
+        const basicAuthConf = this.webserverConfig.basicAuth;
+
+        const userMatches = basicAuth.safeCompare(username, basicAuthConf.username);
+        const passwordMatches = basicAuth.safeCompare(password, basicAuthConf.password);
+
+        return userMatches && passwordMatches;
     }
 
     /**
@@ -197,14 +252,7 @@ class WebServer {
      */
     createAuthMiddleware() {
         const basicAuthMiddleware = basicAuth({
-            authorizer: (username, password) => {
-                const basicAuthConf = this.config.get("webserver").basicAuth;
-
-                const userMatches = basicAuth.safeCompare(username, basicAuthConf.username);
-                const passwordMatches = basicAuth.safeCompare(password, basicAuthConf.password);
-
-                return userMatches && passwordMatches;
-            },
+            authorizer: this.performAuthCheck.bind(this),
             challenge: true,
             unauthorizedResponse: (req) => {
                 return req.auth ? "Invalid credentials" : "No credentials provided";
@@ -235,7 +283,15 @@ class WebServer {
             //closing the server
             this.webserver.close(() => {
                 Logger.debug("Webserver shutdown done");
-                resolve();
+
+                if (this.webserverHttps) {
+                    this.webserverHttps.close(() => {
+                        Logger.debug("Webserver https shutdown done");
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
             });
         });
     }

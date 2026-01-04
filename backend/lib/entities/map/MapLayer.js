@@ -26,6 +26,7 @@ class MapLayer extends SerializableEntity {
      * @param {number} [options.metaData.area] in cm²
      * @param {string} [options.metaData.segmentId]
      * @param {string} [options.metaData.name]
+     * @param {number} [options.metaData.cleanOrder]
      * @param {boolean} [options.metaData.active]
      * @param {MapLayerMaterial} [options.metaData.material]
      */

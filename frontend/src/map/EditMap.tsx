@@ -256,6 +256,8 @@ class EditMap extends BaseMap<EditMapProps, EditMapState> {
     }
 
     protected onMapUpdate() : void {
+        super.onMapUpdate();
+
         if (this.pendingVirtualRestrictionsStructuresUpdate) {
             this.updateVirtualRestrictionClientStructures(true);
             this.updateVirtualRestrictionClientStructures(false);

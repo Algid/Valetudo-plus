@@ -18,7 +18,7 @@ class Configuration {
         this.eventEmitter = new EventEmitter();
         this.settings = structuredClone(DEFAULT_SETTINGS);
 
-        this.location = process.env[env.ConfigPath] ?? path.join(os.tmpdir(), "valetudo_config.json");
+        this.location = path.join(process.env[env.DataPath] ?? os.tmpdir(), "valetudo_config.json");
 
         this.loadConfig();
     }

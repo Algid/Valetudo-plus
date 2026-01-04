@@ -1,0 +1,79 @@
+{
+  "/api/v2/robot/capabilities/MultipleMapCapability": {
+    "get": {
+      "tags": [
+        "MultipleMapCapability"
+      ],
+      "summary": "Get maps",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ValetudoMapEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "MultipleMapCapability"
+      ],
+      "summary": "Switch map",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "switch_map"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
+  "/api/v2/robot/capabilities/MultipleMapCapability/properties": {
+    "get": {
+      "tags": [
+        "MultipleMapCapability"
+      ],
+      "summary": "Get various capability-related properties",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
