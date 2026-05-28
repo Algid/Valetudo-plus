@@ -108,6 +108,13 @@ These steps adds camera streaming support to Valetudo. It is optional and the ca
 8. Run `touch mnt_private-copy/certificate.bin`
 9. Edit `go2rtc.yaml` to update the placeholder RTSP password
 10. Run `chmod +x video_monitor go2rtc`
+11. Edit `/data/valetudo/valetudo_config.json` updating the following option so that Valetudo launches the streamer processes:
+
+```
+webserver.streamerProxy.manageProcesses: true
+```
+
+> **Optional**: Additionally setting `webserver.streamerProxy.stopWhenIdle: true` will only run the streamer processes while the robot is in an active state (cleaning, returning, etc.) and stop them otherwise. This offers some privacy advantages and some robots may require this to operate correctly such as recent Dreame X40 firmwares.
 
 ### Part 4 (Custom audio playback) [Optional]
 

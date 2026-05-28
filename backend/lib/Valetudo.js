@@ -20,6 +20,7 @@ const Updater = require("./updater/Updater");
 const ValetudoEventHandlerFactory = require("./valetudo_events/ValetudoEventHandlerFactory");
 const ValetudoHelper = require("./utils/ValetudoHelper");
 const ValetudoRobotFactory = require("./core/ValetudoRobotFactory");
+const VideoMonitorManager = require("./VideoMonitorManager");
 
 class Valetudo {
     constructor() {
@@ -76,6 +77,11 @@ class Valetudo {
         });
 
         this.robot.startup();
+
+        this.videoMonitorManager = new VideoMonitorManager({
+            config: this.config,
+            robot: this.robot
+        });
 
         this.updater = new Updater({
             config: this.config,
@@ -254,6 +260,7 @@ class Valetudo {
         }
 
         await this.webserver.shutdown();
+        await this.videoMonitorManager.shutdown();
         await this.robot.shutdown();
         await this.ntpClient.shutdown();
 

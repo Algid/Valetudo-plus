@@ -6,13 +6,10 @@
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 
-## Start vacuumstreamer
+## Configure vacuumstreamer
 if [[ -f /data/valetudo/streamer/video_monitor ]]; then
   mount --bind /data/valetudo/streamer/video_monitor-conf /ava/conf/video_monitor
   mount --bind /data/valetudo/streamer/mnt_private-copy /mnt/private
-
-  LD_PRELOAD=/data/valetudo/streamer/vacuumstreamer.so /data/valetudo/streamer/video_monitor > /dev/null 2>&1 &
-  /data/valetudo/streamer/go2rtc -c /data/valetudo/streamer/go2rtc.yaml > /dev/null 2>&1 &
 fi
 
 # Start Valetudo

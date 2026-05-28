@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchStreams } from "./client";
 
 // Always prepend with go2rtc to avoid conflicts with Valetudo queries
@@ -11,6 +11,8 @@ export const useGo2RtcStreamsQuery = () => {
         queryKey: [QueryKey.Streams],
         queryFn: fetchStreams,
 
-        staleTime: Infinity
+        refetchInterval: 7000,
+        retry: false,
+        placeholderData: keepPreviousData
     });
 };

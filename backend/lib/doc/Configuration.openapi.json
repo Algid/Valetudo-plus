@@ -356,6 +356,14 @@
           },
           "timeoutMs": {
             "type": "number"
+          },
+          "manageProcesses": {
+            "type": "boolean",
+            "description": "When enabled, Valetudo will manage the lifecycle of the streamer processes (video_monitor and go2rtc) instead of relying on them being started by the postboot script."
+          },
+          "stopWhenIdle": {
+            "type": "boolean",
+            "description": "Only applies when manageProcesses is enabled. When set, the streamer processes will only run while the robot is in an active state and will be stopped otherwise. Otherwise they will be started at boot and kept running."
           }
         }
       },
