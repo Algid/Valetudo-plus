@@ -115,7 +115,7 @@ These steps allow for on demand playback of custom audio files should it be desi
 
 1. Run `mkdir /data/valetudo/audio` (or let Valetudo create it on startup)
 2. Optionally run `cp /audio/{LANG}/* /data/valetudo/audio` to make the default robot audio files available for manual playback
-3. Custom audio files can now be added to `/data/valetudo/audio` as desired. They must be mono 16kHz `.ogg` files.
+3. Custom audio files can now be added to `/data/valetudo/audio` as desired. They must be `.ogg` files.
 
 ### Part 5 (Final configuration)
 
