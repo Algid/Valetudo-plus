@@ -90,7 +90,7 @@ class DreameSpeakerPlayAudioCapability extends SpeakerPlayAudioCapability {
             }
 
             // Run audio playback async
-            execPromise(`oggdec ${audioPath} -s 0 -b 8 -o - | aplay -r 16000`).then(() => {
+            execPromise(`oggdec ${audioPath} -Q -o - | aplay -D hw`).then(() => {
                 Logger.debug(`Completed playback of audio ${id}`);
             }).catch((err) => {
                 Logger.warn(`Failed to complete playback of audio ${id}: `, err);
