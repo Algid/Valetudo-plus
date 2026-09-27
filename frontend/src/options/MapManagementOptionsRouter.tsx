@@ -3,10 +3,11 @@ import {Navigate, Routes} from "react-router-dom";
 import MapManagement from "./MapManagement";
 import EditMapPage from "../map/EditMapPage";
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
-import {Capability} from "../api";
+import {Capability, useDuststreamingConfigurationQuery} from "../api";
 import React from "react";
 import RobotCoverageMapPage from "../map/RobotCoverageMapPage";
 import SegmentCleanOrderPage from "../map/SegmentCleanOrder";
+import SpectatorMapPage from "../map/SpectatorMapPage";
 
 const OptionsRouter = (): React.ReactElement => {
     const [
@@ -15,15 +16,28 @@ const OptionsRouter = (): React.ReactElement => {
         mapSegmentEditCapabilitySupported,
         mapSegmentRenameCapabilitySupported,
 
-        mapSegmentCleanOrderCapabilitySupported
+        mapSegmentCleanOrderCapabilitySupported,
+
+        mapAnnotationsCapabilitySupported,
+
+        duststreamingSupported,
     ] = useCapabilitiesSupported(
         Capability.CombinedVirtualRestrictions,
 
         Capability.MapSegmentEdit,
         Capability.MapSegmentRename,
 
-        Capability.MapSegmentCleanOrder
+        Capability.MapSegmentCleanOrder,
+
+        Capability.MapAnnotations,
+
+        Capability.Duststreaming
     );
+
+    const {data: duststreamingConfiguration} = useDuststreamingConfigurationQuery({
+        enabled: duststreamingSupported
+    });
+    const duststreamingPossible = duststreamingSupported && duststreamingConfiguration?.enabled !== false;
 
     return (
         <Routes>
@@ -60,8 +74,21 @@ const OptionsRouter = (): React.ReactElement => {
                     }
                 />
             }
+            {
+                mapAnnotationsCapabilitySupported &&
+                <Route
+                    path={"annotations"}
+                    element={
+                        <EditMapPage
+                            mode={"annotations"}
+                        />
+                    }
+                />
+            }
 
             <Route path={"robot_coverage"} element={<RobotCoverageMapPage/>}/>
+
+            <Route path={"spectator"} element={duststreamingPossible ? <SpectatorMapPage/> : <Navigate to="/" />}/>
 
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>

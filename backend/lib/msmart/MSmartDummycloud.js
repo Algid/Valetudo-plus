@@ -16,7 +16,7 @@ const {createBroker} = require("aedes");
 class MSmartDummycloud {
     /**
      * @param {object} options
-     * @param {import("../utils/DummyCloudCertManager")} options.dummyCloudCertManager
+     * @param {import("../utils/DummyCloudTLSManager")} options.dummyCloudTLSManager
      * @param {string} options.bindIP
      * @param {number=} options.timeout timeout in milliseconds to wait for a response
      * @param {(packet: import("./MSmartPacket")) => boolean} options.onIncomingCloudMessage
@@ -28,7 +28,7 @@ class MSmartDummycloud {
      * @param {(type: string, value: any) => void} options.onEvent - TODO naming
      */
     constructor(options) {
-        this.dummyCloudCertManager = options.dummyCloudCertManager;
+        this.dummyCloudTLSManager = options.dummyCloudTLSManager;
         this.bindIP = options.bindIP;
         this.timeout = options.timeout ?? 5000;
         this.onConnected = options.onConnected;
@@ -40,20 +40,6 @@ class MSmartDummycloud {
         this.dummyClientKey = options.dummyClientKey;
 
         this.sendCommandMutex = Semaphore(1);
-
-        this.mqttBroker = createBroker();
-        this.mqttServer = tls.createServer({
-            SNICallback: (hostname, callback) => {
-                const { key, cert } = this.dummyCloudCertManager.getCertificate(hostname);
-                callback(null, tls.createSecureContext({ key: key, cert: cert }));
-            }
-        });
-        this.httpServer = https.createServer({
-            SNICallback: (hostname, callback) => {
-                const { key, cert } = this.dummyCloudCertManager.getCertificate(hostname);
-                callback(null, tls.createSecureContext({ key: key, cert: cert }));
-            }
-        });
 
         this.commandTopic = "device/unknown/down";
         this.aiCommandTopic = "ai/unknown/down";
@@ -75,10 +61,10 @@ class MSmartDummycloud {
     }
 
     setupMQTT() {
+        this.mqttBroker = createBroker();
         this.mqttServer = tls.createServer({
             SNICallback: (hostname, callback) => {
-                const { key, cert } = this.dummyCloudCertManager.getCertificate(hostname);
-                callback(null, tls.createSecureContext({ key: key, cert: cert }));
+                callback(null, this.dummyCloudTLSManager.getSecureContext(hostname));
             }
         }, this.mqttBroker.handle);
 
@@ -139,6 +125,12 @@ class MSmartDummycloud {
     }
 
     setupHTTP() {
+        this.httpServer = https.createServer({
+            SNICallback: (hostname, callback) => {
+                callback(null, this.dummyCloudTLSManager.getSecureContext(hostname));
+            }
+        });
+
         const app = express();
         app.use(express.json());
 
@@ -195,7 +187,17 @@ class MSmartDummycloud {
             Logger.debug(`Handling part get for: ${req.body.mapPart}`);
             Logger.debug(req.body);
 
-            res.status(200).json({ "data": {} });
+            let data = {};
+            if (req.body.mapPart === "semantic_node_config") {
+                data = {
+                    uploadDataPeriodInSeconds: {
+                        highFrequency: 2,
+                        lowFrequency:  60
+                    }
+                };
+            }
+
+            res.status(200).json({ data: data });
         });
 
         app.post("/v1/dev2pro/m7/map/list/:part", (req, res) => {
@@ -500,6 +502,39 @@ class MSmartDummycloud {
             // This is cleaner than giving it a default log file to upload, as that will then go through all the trouble for no reason
             // See also iot_node OnErrorUploadLog
             res.status(200).json({});
+        });
+
+        // 
+        app.post("/sts/files/device-diagnoses", (req, res) => {
+            /*
+                Request payloads observed on J15 Max Ultra FW 558
+                
+                body: {
+                    fileName: 'imu_0_.bin',
+                    deviceId: '1887747012869656578aaaaa',
+                    uploadContentType: 'application/octet-stream',
+                    type: 'IMU'
+                }
+                body: {
+                    fileName: 'rects_4_1208764885.bin',
+                    deviceId: '1887747012869656578aaaaa',
+                    uploadContentType: 'application/octet-stream',
+                    type: 'DETECT'
+                }
+                body: {
+                    fileName: 'finish.bin',
+                    deviceId: '1887747012869656578aaaaa',
+                    uploadContentType: 'application/octet-stream',
+                    type: 'IMU'
+                }
+             */
+            res.status(200).json({
+                errorCode: "0",
+                data: {
+                    url: `https://${req.hostname}/_valetudo/fileUpload?ts=${Date.now()}`
+                },
+                nonce: crypto.randomUUID()
+            });
         });
 
         app.all("*splat", (req, res) => {

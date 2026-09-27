@@ -14,8 +14,6 @@ const { CAPABILITY_TYPE_TO_HANDLE_MAPPING } = require("./handles/HandleMappings"
 
 /**
  * @typedef {object} DeconfigureOptions
- * @property {boolean} [cleanHomie] Default true
- * @property {boolean} [cleanHass] Default true
  * @property {boolean} [unsubscribe] Default true
  */
 
@@ -100,14 +98,12 @@ class MqttController {
         this.hassAnchorProvider = new HassAnchorProvider(); //Always required
 
         if (this.currentConfig.enabled) {
-            if (this.currentConfig.interfaces.homeassistant.enabled) {
-                this.hassController = new HassController({
-                    controller: this,
-                    robot: this.robot,
-                    config: this.config,
-                    friendlyName: this.valetudoHelper.getFriendlyName()
-                });
-            }
+            this.hassController = new HassController({
+                controller: this,
+                robot: this.robot,
+                config: this.config,
+                friendlyName: this.valetudoHelper.getFriendlyName()
+            });
 
             this.robotHandle = new RobotMqttHandle({
                 robot: this.robot,
@@ -156,16 +152,12 @@ class MqttController {
         this.hassAnchorProvider = new HassAnchorProvider(); // Always create a new one to reset anchors + subscriptions
 
         if (this.currentConfig.enabled) {
-            if (this.currentConfig.interfaces.homeassistant.enabled) {
-                this.hassController = new HassController({
-                    controller: this,
-                    robot: this.robot,
-                    config: this.config,
-                    friendlyName: this.valetudoHelper.getFriendlyName()
-                });
-            } else {
-                this.hassController = null;
-            }
+            this.hassController = new HassController({
+                controller: this,
+                robot: this.robot,
+                config: this.config,
+                friendlyName: this.valetudoHelper.getFriendlyName()
+            });
 
             this.robotHandle = new RobotMqttHandle({
                 robot: this.robot,
@@ -234,7 +226,6 @@ class MqttController {
             enabled: mqttConfig.enabled,
             connection: mqttConfig.connection,
             identity: mqttConfig.identity,
-            interfaces: mqttConfig.interfaces,
             customizations: mqttConfig.customizations,
             optionalExposedCapabilities: mqttConfig.optionalExposedCapabilities
         });
@@ -359,9 +350,7 @@ class MqttController {
                         Logger.error("Error while configuring robotHandle", e);
                     }
 
-                    if (this.currentConfig.interfaces.homeassistant.enabled) {
-                        await this.hassController.configure();
-                    }
+                    await this.hassController.configure();
 
                     this.startAutorefreshService();
 
@@ -528,28 +517,22 @@ class MqttController {
 
         await this.reconfigure(async () => {
             const deconfigOpts = {
-                cleanHomie: this.currentConfig.interfaces.homie.cleanAttributesOnShutdown,
-                cleanHass: this.currentConfig.interfaces.homeassistant.cleanAutoconfOnShutdown,
                 unsubscribe: true
             };
 
             await this.robotHandle.deconfigure(deconfigOpts);
 
-            if (this.currentConfig.interfaces.homeassistant.enabled) {
-                await this.hassController.deconfigure(deconfigOpts);
-            }
+            await this.hassController.deconfigure(deconfigOpts);
 
         }, {targetState: HomieCommonAttributes.STATE.DISCONNECTED});
 
-        if (this.currentConfig.interfaces.homeassistant.enabled) {
-            // Workaround to allow sharing one single LWT with both Homie consumers and HAss.
-            // "lost" for Homie means that device disconnected uncleanly, however we also set it as hass's unavailable
-            // payload.
-            // Switching to "lost" temporarily shouldn't bother most Homie consumers, but it will ensure hass also knows
-            // what's up.
-            await this.setState(HomieCommonAttributes.STATE.LOST);
-            await this.setState(HomieCommonAttributes.STATE.DISCONNECTED);
-        }
+        // Workaround to allow sharing one single LWT with both Homie consumers and HAss.
+        // "lost" for Homie means that device disconnected uncleanly, however we also set it as hass's unavailable
+        // payload.
+        // Switching to "lost" temporarily shouldn't bother most Homie consumers, but it will ensure hass also knows
+        // what's up.
+        await this.setState(HomieCommonAttributes.STATE.LOST);
+        await this.setState(HomieCommonAttributes.STATE.DISCONNECTED);
 
         await this.disconnect();
     }
@@ -604,7 +587,7 @@ class MqttController {
     }
 
     onMapUpdated() {
-        if (this.currentConfig.enabled && this.isInitialized && this.robotHandle !== null && (this.currentConfig.customizations.provideMapData ?? true)) {
+        if (this.currentConfig.enabled && this.isInitialized && this.robotHandle !== null) {
             const mapHandle = this.robotHandle.getMapHandle();
 
             if (mapHandle !== null) {
@@ -779,10 +762,6 @@ class MqttController {
      * @return {Promise<void>}
      */
     async publishHomieAttributes(handle) {
-        if (!this.currentConfig.interfaces.homie.enabled) {
-            return;
-        }
-
         if (this.isInitialized) {
             throw new Error("Homie attributes may be altered only while the MQTT controller is not initialized");
         }
@@ -807,53 +786,19 @@ class MqttController {
     }
 
     /**
-     * Remove all Homie attributes for an handle. This can only be used while in reconfiguration mode.
-     *
-     * @param {import("./handles/MqttHandle")} handle
-     * @return {Promise<void>}
-     */
-    async dropHomieAttributes(handle) {
-        if (!this.currentConfig.interfaces.homie.enabled) {
-            return;
-        }
-
-        if (this.isInitialized) {
-            throw new Error("Homie attributes may be altered only while the MQTT controller is not initialized");
-        }
-
-        const attrs = handle.getHomieAttributes();
-        const baseTopic = handle.getBaseTopic();
-
-        for (const topic of Object.keys(attrs)) {
-            try {
-                // @ts-ignore
-                await this.publish(baseTopic + "/" + topic, "", {
-                    // @ts-ignore
-                    qos: MqttCommonAttributes.QOS.AT_LEAST_ONCE,
-                    retain: false
-                });
-            } catch (e) {
-                Logger.warn("Failed to drop Homie attribute, topic " + topic, e);
-            }
-        }
-    }
-
-    /**
      * @callback withHassAsyncCb
      * @param {import("./homeassistant/HassController")} hass
      * @return {Promise<void>}
      */
     /**
      * This is a fancy wrapper inspired by Python's "with" statement. It should be called by Handles that intend to
-     * register their own Hass components. The callback will only be called if Hass is actually enabled.
+     * register their own Hass components.
      *
      * @param {withHassAsyncCb} callback
      * @return {Promise<void>}
      */
     async withHassAsync(callback) {
-        if (this.currentConfig.interfaces.homeassistant.enabled) {
-            await callback(this.hassController);
-        }
+        await callback(this.hassController);
     }
 
 
@@ -864,15 +809,13 @@ class MqttController {
      */
     /**
      * This is a fancy wrapper inspired by Python's "with" statement. It should be called by Handles that intend to
-     * register their own Hass components. The callback will only be called if Hass is actually enabled.
+     * register their own Hass components.
      *
      * @param {withHassCb} callback
      * @return {void}
      */
     withHass(callback) {
-        if (this.currentConfig.interfaces.homeassistant.enabled) {
-            callback(this.hassController);
-        }
+        callback(this.hassController);
     }
 
 
@@ -974,17 +917,6 @@ module.exports = MqttController;
  *
  * @property {object} customizations
  * @property {string} customizations.topicPrefix
- * @property {boolean} customizations.provideMapData
- *
- * @property {object} interfaces
- *
- * @property {object} interfaces.homie
- * @property {boolean} interfaces.homie.enabled
- * @property {boolean} interfaces.homie.cleanAttributesOnShutdown
- *
- * @property {object} interfaces.homeassistant
- * @property {boolean} interfaces.homeassistant.enabled
- * @property {boolean} interfaces.homeassistant.cleanAutoconfOnShutdown
  *
  * @property {Array<string>} optionalExposedCapabilities
  */

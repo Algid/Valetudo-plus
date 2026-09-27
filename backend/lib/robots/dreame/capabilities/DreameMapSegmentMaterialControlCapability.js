@@ -39,6 +39,10 @@ class DreameMapSegmentMaterialControlCapability extends MapSegmentMaterialContro
      * @returns {Promise<void>}
      */
     async setMaterial(segment, material) {
+        if (this.robot.state.map.metaData.vendorMapId === undefined) {
+            throw new Error("Can't set segment material because the map was not parsed yet");
+        }
+
         if (!this.supportedMaterials.includes(material)) {
             throw new Error(`Unsupported material '${material}'.`);
         }
@@ -63,6 +67,15 @@ class DreameMapSegmentMaterialControlCapability extends MapSegmentMaterialContro
             case DreameMapSegmentMaterialControlCapability.MATERIAL.TILE:
                 mappedMaterial = 2;
                 break;
+            case DreameMapSegmentMaterialControlCapability.MATERIAL.CARPET:
+                mappedMaterial = 7;
+                break;
+            case DreameMapSegmentMaterialControlCapability.MATERIAL.CARPET_LOW:
+                mappedMaterial = 6;
+                break;
+            case DreameMapSegmentMaterialControlCapability.MATERIAL.CARPET_HIGH:
+                mappedMaterial = 5;
+                break;
             default:
                 throw new Error(`Unsupported material '${material}'.`);
 
@@ -82,7 +95,8 @@ class DreameMapSegmentMaterialControlCapability extends MapSegmentMaterialContro
                                     material: mappedMaterial,
                                     direction: direction
                                 }
-                            }
+                            },
+                            mapid: this.robot.state.map.metaData.vendorMapId
                         })
                     }
                 ]

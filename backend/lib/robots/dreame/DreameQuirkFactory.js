@@ -468,6 +468,7 @@ class DreameQuirkFactory {
                             case 1:
                                 return "on";
                             case 0:
+                            case -1:
                                 return "off";
                             default:
                                 throw new Error(`Received invalid value ${deserializedResponse.CarpetFineClean}`);
@@ -726,6 +727,7 @@ class DreameQuirkFactory {
                             case 1:
                                 return "on";
                             case 0:
+                            case -1:
                                 return "off";
                             default:
                                 throw new Error(`Received invalid value ${res}`);
@@ -836,11 +838,11 @@ class DreameQuirkFactory {
                         );
                     }
                 });
-            case DreameQuirkFactory.KNOWN_QUIRKS.SUCTION_MAX:
+            case DreameQuirkFactory.KNOWN_QUIRKS.FAN_SPEED_ONE_TIME_TURBO:
                 return new Quirk({
                     id: id,
-                    title: "Suction Boost",
-                    description: "Select if you want the robot to boost suction for the next cleaning operation.",
+                    title: "Fan Speed Turbo",
+                    description: "When enabled, the next cleanup will be done with even higher suction power. Disables itself afterwards.",
                     options: ["on", "off"],
                     getter: async () => {
                         const res = await this.robot.miotHelper.readProperty(
@@ -855,7 +857,7 @@ class DreameQuirkFactory {
                             case 0:
                                 return "off";
                             default:
-                                throw new Error(`Received invalid value ${deserializedResponse.SuctionMax}`);
+                                return "off";
                         }
                     },
                     setter: async (value) => {
@@ -871,7 +873,6 @@ class DreameQuirkFactory {
                             default:
                                 throw new Error(`Received invalid value ${value}`);
                         }
-
 
                         return this.robot.miotHelper.writeProperty(
                             DreameMiotServices["GEN2"].VACUUM_2.SIID,
@@ -908,7 +909,7 @@ DreameQuirkFactory.KNOWN_QUIRKS = {
     CARPET_FIRST: "3d6cd658-c72a-48d9-ba54-38cf2d26e2f6",
     MULTI_MAP: "bd9e34f6-6780-4507-ad32-20e80f5c6b8d",
     INTELLIGENT_MAP_RECOGNITION: "ee22d7ed-e5ec-45ab-bfa6-df7258eb19eb",
-    SUCTION_MAX: "4d7df230-78d7-4a88-bf92-cf97a69607bb"
+    FAN_SPEED_ONE_TIME_TURBO: "017c40b7-dc24-48e8-a6e0-19d66528fa6d"
 };
 
 module.exports = DreameQuirkFactory;

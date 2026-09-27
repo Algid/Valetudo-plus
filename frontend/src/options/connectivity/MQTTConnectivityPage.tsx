@@ -650,40 +650,6 @@ const MQTTConnectivity = (): React.ReactElement => {
                 </GroupBox>
             </GroupBox>
 
-            <GroupBox title="Integrations">
-                <GroupBox title="Home Assistant" checked={mqttConfiguration.interfaces.homeassistant.enabled}
-                    onChange={(e) => {
-                        modifyMQTTConfig(e.target.checked, ["interfaces", "homeassistant", "enabled"]);
-                    }}>
-                    <FormControl component="fieldset" variant="standard">
-                        <FormGroup sx={{marginLeft: "1rem"}}>
-                            <MQTTSwitch
-                                mqttConfiguration={mqttConfiguration}
-                                modifyMQTTConfig={modifyMQTTConfig}
-                                title="Delete autodiscovery metadata on shutdown"
-                                configPath={["interfaces", "homeassistant", "cleanAutoconfOnShutdown"]}
-                            />
-                        </FormGroup>
-                    </FormControl>
-                </GroupBox>
-
-                <GroupBox title="Homie" checked={mqttConfiguration.interfaces.homie.enabled}
-                    onChange={(e) => {
-                        modifyMQTTConfig(e.target.checked, ["interfaces", "homie", "enabled"]);
-                    }}>
-                    <FormControl component="fieldset" variant="standard">
-                        <FormGroup sx={{marginLeft: "1rem"}}>
-                            <MQTTSwitch
-                                mqttConfiguration={mqttConfiguration}
-                                modifyMQTTConfig={modifyMQTTConfig}
-                                title="Delete autodiscovery metadata on shutdown"
-                                configPath={["interfaces", "homie", "cleanAttributesOnShutdown"]}
-                            />
-                        </FormGroup>
-                    </FormControl>
-                </GroupBox>
-            </GroupBox>
-
             <GroupBox title="Customizations">
                 <MQTTInput
                     mqttConfiguration={mqttConfiguration}
@@ -764,12 +730,6 @@ const MQTTConnectivity = (): React.ReactElement => {
                             /<wbr/>BatteryStateAttribute/<wbr/>level
                     </span>
                 </Typography>
-                <MQTTSwitch
-                    mqttConfiguration={mqttConfiguration}
-                    modifyMQTTConfig={modifyMQTTConfig}
-                    title="Provide map data"
-                    configPath={["customizations", "provideMapData"]}
-                />
             </GroupBox>
 
             {

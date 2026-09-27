@@ -3,23 +3,28 @@ import {
     RestartAlt as ConfigRestoreIcon,
     SystemUpdateAlt as UpdaterIcon,
     Badge as FriendlyNameIcon,
+    Equalizer as StatisticsIcon,
 } from "@mui/icons-material";
 import {ListMenu} from "../components/list_menu/ListMenu";
 import PaperContainer from "../components/PaperContainer";
 import {
     UpdaterConfiguration,
+    Capability,
     useRestoreDefaultConfigurationMutation,
     useUpdaterConfigurationMutation,
     useUpdaterConfigurationQuery,
     useValetudoCustomizationsMutation,
     useValetudoCustomizationsQuery
 } from "../api";
+import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {ButtonListMenuItem} from "../components/list_menu/ButtonListMenuItem";
 import {SelectListMenuItem, SelectListMenuItemOption} from "../components/list_menu/SelectListMenuItem";
 import {SpacerListMenuItem} from "../components/list_menu/SpacerListMenuItem";
 import { TextEditModalListMenuItem } from "../components/list_menu/TextEditModalListMenuItem";
+import { DuststreamingListMenuItem } from "../components/list_menu/DuststreamingListMenuItem";
 import { ActivationListMenuItem } from "./ValetudoActivation";
 import {isAprilFools} from "../utils";
+import {LinkListMenuItem} from "../components/list_menu/LinkListMenuItem";
 
 
 const ConfigRestoreButtonListMenuItem = (): React.ReactElement => {
@@ -134,23 +139,41 @@ const UpdateProviderSelectListMenuItem = (): React.ReactElement => {
 };
 
 const ValetudoOptions = (): React.ReactElement => {
+    const [duststreamingCapabilitySupported] = useCapabilitiesSupported(
+        Capability.Duststreaming,
+    );
+
     const listItems = React.useMemo(() => {
         const items = [
             <ConfigRestoreButtonListMenuItem key={"configRestoreAction"}/>,
             <SpacerListMenuItem key={"spacer0"}/>,
             <FriendlyNameEditModalListMenuItem key={"friendlyName"}/>,
             <UpdateProviderSelectListMenuItem key={"updateProviderSelect"}/>,
+            <LinkListMenuItem
+                key={"analytics"}
+                url="/options/valetudo/analytics"
+                primaryLabel="Analytics"
+                secondaryLabel="Learn how we use your data"
+                icon={<StatisticsIcon />}
+            />,
         ];
+
+        if (duststreamingCapabilitySupported) {
+            items.push(
+                <SpacerListMenuItem key={"spacer1"}/>,
+                <DuststreamingListMenuItem key={"duststreaming"}/>
+            );
+        }
 
         if (isAprilFools) {
             items.unshift(
                 <ActivationListMenuItem key={"activation"}/>,
-                <SpacerListMenuItem key={"spacer1"}/>
+                <SpacerListMenuItem key={"spacer2"}/>
             );
         }
 
         return items;
-    }, []);
+    }, [duststreamingCapabilitySupported]);
 
     return (
         <PaperContainer>

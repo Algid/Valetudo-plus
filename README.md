@@ -38,7 +38,6 @@ Please read the supported devices section for more information.
 - Multiple map / floor capabilities (be sure to enable in quirks!).
 - Map rotation.
 - Segment clean order.
-- View robot camera stream in the UI (via go2rtc).
 - On-demand playback of custom audio.
 - MQTT support for map switching.
 - MQTT support for custom audio playback.
@@ -90,33 +89,7 @@ webserver.https.enabled: true
 
 Doing this will automatically enforce HTTPS redirection on the HTTP port.
 
-### Part 3 (Vaccumstreamer) [Optional]
-
-These steps adds camera streaming support to Valetudo. It is optional and the camera UI components will automatically be hidden if you choose not to use it.
-
-> **Please note**: The steps use precompiled binaries from the following projects, updated versions can be built / downloaded if required:
-> - https://github.com/tihmstar/vacuumstreamer/
-> - https://github.com/AlexxIT/go2rtc/
-
-1. Get a copy of streamer.tar.gz from a release build or build your own following instructions under "Development"
-2. SCP `streamer.tar.gz` to your robot
-3. Run `cd /data/valetudo`
-4. Move `streamer.tar.gz` into this directory and run `tar xzf streamer.tar.gz`
-5. Remove `streamer.tar.gz` as it is no longer needed
-6. Run `cd streamer`
-7. Run `cp -r /mnt/private/ mnt_private-copy`
-8. Run `touch mnt_private-copy/certificate.bin`
-9. Edit `go2rtc.yaml` to update the placeholder RTSP password
-10. Run `chmod +x video_monitor go2rtc`
-11. Edit `/data/valetudo/valetudo_config.json` updating the following option so that Valetudo launches the streamer processes:
-
-```
-webserver.streamerProxy.manageProcesses: true
-```
-
-> **Optional**: Additionally setting `webserver.streamerProxy.stopWhenIdle: true` will only run the streamer processes while the robot is in an active state (cleaning, returning, etc.) and stop them otherwise. This offers some privacy advantages and some robots may require this to operate correctly such as recent Dreame X40 firmwares.
-
-### Part 4 (Custom audio playback) [Optional]
+### Part 3 (Custom audio playback) [Optional]
 
 These steps allow for on demand playback of custom audio files should it be desired. It is optional so you can skip these steps if you don't wish to use it.
 
@@ -124,7 +97,7 @@ These steps allow for on demand playback of custom audio files should it be desi
 2. Optionally run `cp /audio/{LANG}/* /data/valetudo/audio` to make the default robot audio files available for manual playback
 3. Custom audio files can now be added to `/data/valetudo/audio` as desired. They must be `.ogg` files.
 
-### Part 5 (Final configuration)
+### Part 4 (Final configuration)
 
 These steps will update the `_root_postboot.sh` startup script on the vacuum.
 
@@ -194,12 +167,6 @@ Build for all platforms at once:
 
 ```
 $ npm run build
-```
-
-Build streamer.tar.gz:
-
-```
-$ npm run build:streamer
 ```
 
 All builds can be found in the `build` directory.

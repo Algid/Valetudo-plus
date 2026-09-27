@@ -1,6 +1,7 @@
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {
     Capability,
+    useDuststreamingConfigurationQuery,
     useMapResetMutation,
     useMultipleMapDeleteMutation,
     useMultipleMapMapsQuery,
@@ -24,6 +25,8 @@ import {
     Delete,
     SwapVert,
     RotateRight,
+    EditNote as MapAnnotationsIcon,
+    Videocam as SpectatorIcon,
 } from "@mui/icons-material";
 import React from "react";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -442,7 +445,10 @@ const MapManagement = (): React.ReactElement => {
         mapSegmentRenameCapabilitySupported,
         mapSegmentCleanOrderCapabilitySupported,
 
-        combinedVirtualRestrictionsCapabilitySupported
+        combinedVirtualRestrictionsCapabilitySupported,
+        mapAnnotationsCapabilitySupported,
+
+        duststreamingCapabilitySupported
     ] = useCapabilitiesSupported(
         Capability.PersistentMapControl,
         Capability.MultipleMap,
@@ -457,8 +463,16 @@ const MapManagement = (): React.ReactElement => {
 
         Capability.MapSegmentCleanOrder,
 
-        Capability.CombinedVirtualRestrictions
+        Capability.CombinedVirtualRestrictions,
+        Capability.MapAnnotations,
+
+        Capability.Duststreaming
     );
+
+    const {data: duststreamingConfiguration} = useDuststreamingConfigurationQuery({
+        enabled: duststreamingCapabilitySupported
+    });
+    const duststreamingEnabled = duststreamingConfiguration?.enabled === true;
 
     const multipleMapListItems = React.useMemo(() => {
         const items = [];
@@ -567,6 +581,18 @@ const MapManagement = (): React.ReactElement => {
             );
         }
 
+        if (mapAnnotationsCapabilitySupported) {
+            items.push(
+                <LinkListMenuItem
+                    key="mapAnnotationsManagement"
+                    url="/options/map_management/annotations"
+                    primaryLabel="Map Annotation Management"
+                    secondaryLabel="Create, modify and delete various other map stuff"
+                    icon={<MapAnnotationsIcon/>}
+                />
+            );
+        }
+
         return items;
     }, [
         persistentMapControlCapabilitySupported,
@@ -575,22 +601,38 @@ const MapManagement = (): React.ReactElement => {
 
         combinedVirtualRestrictionsCapabilitySupported,
         mapSegmentCleanOrderCapabilitySupported,
+        mapAnnotationsCapabilitySupported,
         mapSegmentEditCapabilitySupported,
         mapSegmentRenameCapabilitySupported
     ]);
 
     const utilityMapItems = React.useMemo(() => {
-        return [
+        const items = [
             <LinkListMenuItem
                 key="robotCoverageMap"
                 url="/options/map_management/robot_coverage"
                 primaryLabel="Robot Coverage Map"
                 secondaryLabel="Check the robots coverage"
                 icon={<CleanupCoverageIcon/>}
-            />,
-            <ValetudoMapDataExportButtonItem key="valetudoMapDataExport" />
+            />
         ];
-    }, []);
+
+        if (duststreamingCapabilitySupported && duststreamingEnabled) {
+            items.push(
+                <LinkListMenuItem
+                    key="spectatorMap"
+                    url="/options/map_management/spectator"
+                    primaryLabel="Spectator Map"
+                    secondaryLabel="Watch it clean"
+                    icon={<SpectatorIcon/>}
+                />
+            );
+        }
+
+        items.push(<ValetudoMapDataExportButtonItem key="valetudoMapDataExport" />);
+
+        return items;
+    }, [duststreamingCapabilitySupported, duststreamingEnabled]);
 
     return (
         <PaperContainer>

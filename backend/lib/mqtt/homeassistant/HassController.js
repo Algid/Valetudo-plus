@@ -182,20 +182,6 @@ class HassController {
             {qos: MqttCommonAttributes.QOS.AT_LEAST_ONCE, retain: true}
         );
     }
-
-    /**
-     * Drop the autoconfiguration topic for the specified component.
-     *
-     * @param {import("./components/HassComponent")} component
-     * @return {Promise<void>}
-     */
-    async dropAutoconf(component) {
-        await this.controller.publishHass(
-            component.getAutoconfTopic(),
-            "",
-            {qos: MqttCommonAttributes.QOS.AT_LEAST_ONCE, retain: false}
-        );
-    }
 }
 
 module.exports = HassController;

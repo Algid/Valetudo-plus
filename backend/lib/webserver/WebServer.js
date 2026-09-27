@@ -1,4 +1,3 @@
-const auth = require("basic-auth");
 const basicAuth = require("express-basic-auth");
 const compression = require("compression");
 const dynamicMiddleware = require("express-dynamic-middleware");
@@ -14,6 +13,7 @@ const Logger = require("../Logger");
 const env = require("../res/env");
 const notFoundPages = require("./res/404");
 
+const KillswitchRouter = require("./KillswitchRouter");
 const Middlewares = require("./middlewares");
 const RobotRouter = require("./RobotRouter");
 const ValetudoRouter = require("./ValetudoRouter");
@@ -24,7 +24,6 @@ const MQTTRouter = require("./MQTTRouter");
 const NetworkAdvertisementManagerRouter = require("./NetworkAdvertisementManagerRouter");
 const NTPClientRouter = require("./NTPClientRouter");
 const SSDPRouter = require("./SSDPRouter");
-const StreamerRouter = require("./StreamerRouter");
 const SystemRouter = require("./SystemRouter");
 const TimerRouter = require("./TimerRouter");
 const Tools = require("../utils/Tools");
@@ -78,6 +77,12 @@ class WebServer {
 
         this.app.use(Middlewares.EggTermMiddleware);
 
+        // Intentionally bypasses auth
+        this.app.use(
+            "/_killswitch",
+            new KillswitchRouter({robot: this.robot}).getRouter()
+        );
+
         const authMiddleware = this.createAuthMiddleware();
         const dynamicAuth = dynamicMiddleware.create([]);
         this.app.use(dynamicAuth.handle());
@@ -119,22 +124,6 @@ class WebServer {
         } else {
             server = http.createServer(this.app);
         }
-
-        // Apply basic auth to primary server on WS upgrade
-        (httpsServer ?? server).on("upgrade", (req, socket) => {
-            // Auth disabled
-            if (!this.basicAuthInUse) {
-                return;
-            }
-
-            const authCreds = auth(req);
-            if (authCreds && this.performAuthCheck(authCreds.name, authCreds.pass)) {
-                return;
-            }
-
-            Logger.info(`WS upgrade credentials invalid for ${req.url}`);
-            socket.end("HTTP/1.1 401 Unauthorized");
-        });
 
         this.loadApiSpec();
         this.validator = function superBasicValidationMiddleware(req, res, next) {
@@ -183,8 +172,6 @@ class WebServer {
 
         this.app.use("/_ssdp/", new SSDPRouter({config: this.config, robot: this.robot, valetudoHelper: this.valetudoHelper}).getRouter());
 
-        this.app.use("/streamer/", new StreamerRouter({config: this.config}).getRouter());
-
         this.app.use(express.static(path.join(__dirname, "../../..", "frontend/build")));
 
 
@@ -219,22 +206,20 @@ class WebServer {
         this.webserverHttps = httpsServer;
     }
 
-    performAuthCheck(username, password) {
-        const basicAuthConf = this.webserverConfig.basicAuth;
-
-        const userMatches = basicAuth.safeCompare(username, basicAuthConf.username);
-        const passwordMatches = basicAuth.safeCompare(password, basicAuthConf.password);
-
-        return userMatches && passwordMatches;
-    }
-
     /**
      * @private
      * @returns {(req: any, res: any, next: any) => void}
      */
     createAuthMiddleware() {
         const basicAuthMiddleware = basicAuth({
-            authorizer: this.performAuthCheck.bind(this),
+            authorizer: (username, password) => {
+                const basicAuthConf = this.config.get("webserver").basicAuth;
+
+                const userMatches = basicAuth.safeCompare(username, basicAuthConf.username);
+                const passwordMatches = basicAuth.safeCompare(password, basicAuthConf.password);
+
+                return userMatches && passwordMatches;
+            },
             challenge: true,
             unauthorizedResponse: (req) => {
                 return req.auth ? "Invalid credentials" : "No credentials provided";

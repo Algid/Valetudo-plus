@@ -194,8 +194,7 @@ class MqttHandle {
     }
 
     /**
-     * Deconfigure this handle. It will publish zero-length payloads to all autodiscovery-related attributes.
-     * It will also deconfigure all children handles.
+     * Deconfigure this handle. It will also deconfigure all children handles.
      * This function must be used as a callback of the controller's reconfigure method so that the state is updated
      * accordingly.
      *
@@ -213,17 +212,11 @@ class MqttHandle {
         }
 
         for (const component of this.hassComponents) {
-            await component.deconfigure(Object.assign({
-                cleanHass: false,
-            }, options));
+            await component.deconfigure(options);
         }
 
         for (const child of this.children) {
             await child.deconfigure(options);
-        }
-
-        if (options === undefined || options.cleanHomie !== false) {
-            await this.controller.dropHomieAttributes(this);
         }
     }
 

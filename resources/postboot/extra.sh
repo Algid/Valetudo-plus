@@ -6,12 +6,6 @@
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 
-## Configure vacuumstreamer
-if [[ -f /data/valetudo/streamer/video_monitor ]]; then
-  mount --bind /data/valetudo/streamer/video_monitor-conf /ava/conf/video_monitor
-  mount --bind /data/valetudo/streamer/mnt_private-copy /mnt/private
-fi
-
 # Start Valetudo
 if [[ -f /data/valetudo/valetudo ]]; then
   VALETUDO_DATA_PATH=/data/valetudo /data/valetudo/valetudo > /dev/null 2>&1 &
@@ -24,9 +18,6 @@ sleep 30
 /usr/sbin/iptables -A INPUT -p tcp --dport 80 -j ACCEPT  # HTTP
 /usr/sbin/iptables -A INPUT -p tcp --dport 443 -j ACCEPT # HTTPS
 #/usr/sbin/iptables -A INPUT -p udp --dport 5353 -j ACCEPT # mDNS
-/usr/sbin/iptables -A INPUT -p tcp --dport 8554 -j ACCEPT # RTSP
-/usr/sbin/iptables -A INPUT -p tcp --dport 8555 -j ACCEPT # WebRTC
-/usr/sbin/iptables -A INPUT -p udp --dport 8555 -j ACCEPT # WebRTC
 /usr/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 /usr/sbin/iptables -A INPUT -i lo -j ACCEPT
 /usr/sbin/iptables -P INPUT DROP

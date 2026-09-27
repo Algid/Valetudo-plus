@@ -2,6 +2,7 @@ module.exports = {
     ValetudoDNDConfiguration: require("./ValetudoDNDConfiguration"),
     ValetudoDataPoint: require("./ValetudoDataPoint"),
     ValetudoManualMovementVector: require("./ValetudoManualMovementVector"),
+    ValetudoMapAnnotation: require("./ValetudoMapAnnotation"),
     ValetudoMapEntry: require("./ValetudoMapEntry"),
     ValetudoMapSegment: require("./ValetudoMapSegment"),
     ValetudoMapSnapshot: require("./ValetudoMapSnapshot"),

@@ -26,6 +26,7 @@ import {
     LogLevelResponse,
     ManualControlInteraction,
     ManualControlProperties,
+    MapAnnotationsProperties,
     MapSegmentationActionRequestParameters,
     MapSegmentationProperties,
     MapSegmentEditJoinRequestParameters,
@@ -49,6 +50,8 @@ import {
     NTPClientStatus,
     ObstacleImagesProperties,
     MapEntry,
+    DuststreamingProperties,
+    DuststreamingConfiguration,
     Point,
     Quirk,
     RobotInformation,
@@ -71,6 +74,7 @@ import {
     ValetudoEvent,
     ValetudoEventInteractionContext,
     ValetudoInformation,
+    ValetudoMapAnnotation,
     ValetudoVersion,
     ValetudoWifiNetwork,
     VoicePackManagementCommand,
@@ -1334,6 +1338,32 @@ export const fetchObstacleImagesProperties = async (): Promise<ObstacleImagesPro
         });
 };
 
+export const fetchDuststreamingProperties = async (): Promise<DuststreamingProperties> => {
+    return valetudoAPI
+        .get<DuststreamingProperties>(`/robot/capabilities/${Capability.Duststreaming}/properties`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const fetchDuststreamingConfiguration = async (): Promise<DuststreamingConfiguration> => {
+    return valetudoAPI
+        .get<DuststreamingConfiguration>("/valetudo/config/duststreaming")
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendDuststreamingConfiguration = async (configuration: DuststreamingConfiguration): Promise<void> => {
+    return valetudoAPI
+        .put("/valetudo/config/duststreaming", configuration)
+        .then(({status}) => {
+            if (status !== 200) {
+                throw new Error("Could not update dust streaming configuration");
+            }
+        });
+};
+
 export const sendMopDockMopWashTemperature = async (payload: MopDockMopWashTemperaturePayload): Promise<void> => {
     return valetudoAPI
         .put(`/robot/capabilities/${Capability.MopDockMopWashTemperatureControl}`, payload)
@@ -1372,6 +1402,26 @@ export const fetchMopDockMopAutoDryingControlState = async (): Promise<SimpleTog
 
 export const sendMopDockMopAutoDryingControlState = async (enable: boolean): Promise<void> => {
     await sendToggleMutation(Capability.MopDockMopAutoDryingControl, enable);
+};
+
+
+export const fetchMapAnnotationsProperties = async (): Promise<MapAnnotationsProperties> => {
+    return valetudoAPI
+        .get<MapAnnotationsProperties>(
+            `/robot/capabilities/${Capability.MapAnnotations}/properties`
+        )
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendMapAnnotationsUpdate = async (
+    mapAnnotations: Array<ValetudoMapAnnotation>
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MapAnnotations}`,
+        mapAnnotations
+    );
 };
 
 export const fetchFloorMaterialDirectionAwareNavigationControlState = async (): Promise<SimpleToggleState> => {

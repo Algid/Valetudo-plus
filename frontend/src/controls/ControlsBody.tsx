@@ -1,4 +1,4 @@
-import {Box, Grid2, Paper} from "@mui/material";
+import {Grid2} from "@mui/material";
 import {
     AppRegistration as OperationModeIcon,
 } from "@mui/icons-material";
@@ -12,8 +12,8 @@ import CurrentStatistics from "./CurrentStatistics";
 import Attachments from "./Attachments";
 import {FanSpeedMediumIcon, WaterGradeLowIcon} from "../components/CustomIcons";
 import React from "react";
-import CameraStream from "./CameraStream";
 import MultipleMap from "./MultipleMap";
+import CameraPreview from "./CameraPreview";
 
 
 const ControlsBody = (): React.ReactElement => {
@@ -27,6 +27,7 @@ const ControlsBody = (): React.ReactElement => {
         mopDockCleanTriggerSupported,
         mopDockDryTriggerSupported,
         currentStatistics,
+        duststreamingSupported,
     ] = useCapabilitiesSupported(
         Capability.BasicControl,
         Capability.MultipleMap,
@@ -36,26 +37,22 @@ const ControlsBody = (): React.ReactElement => {
         Capability.AutoEmptyDockManualTrigger,
         Capability.MopDockCleanManualTrigger,
         Capability.MopDockDryManualTrigger,
-        Capability.CurrentStatistics
+        Capability.CurrentStatistics,
+        Capability.Duststreaming
     );
 
     const {
         data: robotInformation,
     } = useRobotInformationQuery();
 
-    const [cameraVisible, setCameraVisible] = React.useState(false);
 
     return (
         <Grid2 container spacing={1.5} direction="column" sx={{userSelect: "none"}}>
-            <Paper style={{display: !cameraVisible ? "none" : undefined}}>
-                <Box px={1.5} py={1.5}>
-                    <CameraStream iframeStyle={{minHeight: "25vh"}} setVisible={setCameraVisible} />
-                </Box>
-            </Paper>
-
-            <RobotStatus />
+            {duststreamingSupported && <CameraPreview />}
 
             {basicControls && <BasicControls />}
+
+            <RobotStatus />
 
             {operationMode && (
                 <PresetSelectionControl

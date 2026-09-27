@@ -4,7 +4,7 @@ const fs = require("fs");
 const BEightParser = require("../../msmart/BEightParser");
 const capabilities = require("./capabilities");
 const dtos = require("../../msmart/dtos");
-const DummyCloudCertManager = require("../../utils/DummyCloudCertManager");
+const DummyCloudTLSManager = require("../../utils/DummyCloudTLSManager");
 const entities = require("../../entities");
 const Logger = require("../../Logger");
 const MideaMapHacksProvider = require("./MideaMapHacksProvider");
@@ -50,7 +50,7 @@ class MideaValetudoRobot extends ValetudoRobot {
             const caKey = forge.pki.privateKeyFromPem(fs.readFileSync(CA_KEY_PATH, "utf8"));
             const caCert = forge.pki.certificateFromPem(fs.readFileSync(CA_CERT_PATH, "utf8"));
 
-            this.dummyCloudCertManager = new DummyCloudCertManager({caKey: caKey, caCert: caCert});
+            this.dummyCloudTLSManager = new DummyCloudTLSManager({caKey: caKey, caCert: caCert});
         }
 
         this.mapHacksProvider = new MideaMapHacksProvider({robot: this});
@@ -59,7 +59,7 @@ class MideaValetudoRobot extends ValetudoRobot {
         this.activeMapUpdateCount = 0;
 
         this.dummycloud = new MSmartDummycloud({
-            dummyCloudCertManager: this.dummyCloudCertManager,
+            dummyCloudTLSManager: this.dummyCloudTLSManager,
             bindIP: BIND_IP,
             timeout: 5000,
             dummyClientCert: DUMMY_CLIENT_CERT,
@@ -83,6 +83,7 @@ class MideaValetudoRobot extends ValetudoRobot {
                 switch (type) {
                     case "11": // Could be cleanup process in %
                     case "13": // Could be cleanup done
+                    case "17": // Seems to have something to do with cloud reconnects?
                         // ignored (for now?)
                         break;
                     default:
@@ -1183,7 +1184,7 @@ MideaValetudoRobot.HIGH_RESOLUTION_WATER_GRADES = Object.freeze({
     [stateAttrs.PresetSelectionStateAttribute.INTENSITY.MIN]: 101,
     [stateAttrs.PresetSelectionStateAttribute.INTENSITY.LOW]: 108,
     [stateAttrs.PresetSelectionStateAttribute.INTENSITY.MEDIUM]: 115,
-    [stateAttrs.PresetSelectionStateAttribute.INTENSITY.HIGH]: 120, // J15pu default
+    [stateAttrs.PresetSelectionStateAttribute.INTENSITY.HIGH]: 122,
     [stateAttrs.PresetSelectionStateAttribute.INTENSITY.MAX]: 130,
 });
 

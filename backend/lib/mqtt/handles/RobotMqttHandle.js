@@ -130,7 +130,6 @@ class RobotMqttHandle extends MqttHandle {
 
             if (this.controller.isConnected) {
                 await this.deconfigure({
-                    cleanHomie: false,
                     unsubscribe: false
                 });
 

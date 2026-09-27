@@ -17,13 +17,7 @@
             "username": "admin",
             "password": "password"
         },
-        "blockExternalAccess": true,
-        "streamerProxy": {
-            "url": "http://127.0.0.1:1984",
-            "timeoutMs": 15000,
-            "manageProcesses": false,
-            "stopWhenIdle": false
-        }
+        "blockExternalAccess": true
     },
     "mqtt": {
         "enabled": false,
@@ -51,19 +45,8 @@
         "identity": {
             "identifier": ""
         },
-        "interfaces": {
-            "homie": {
-                "enabled": true,
-                "cleanAttributesOnShutdown": false
-            },
-            "homeassistant": {
-                "enabled": true,
-                "cleanAutoconfOnShutdown": false
-            }
-        },
         "customizations": {
-            "topicPrefix": "",
-            "provideMapData": true
+            "topicPrefix": ""
         },
         "optionalExposedCapabilities": []
     },
@@ -92,6 +75,9 @@
     },
     "oobe": {
         "welcomeDialogDismissed": false
+    },
+    "duststreaming": {
+        "enabled": false
     },
     "valetudo": {
         "customizations": {

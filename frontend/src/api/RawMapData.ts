@@ -60,7 +60,10 @@ export enum RawMapLayerMaterial {
     Tile = "tile",
     Wood = "wood",
     WoodHorizontal = "wood_horizontal",
-    WoodVertical = "wood_vertical"
+    WoodVertical = "wood_vertical",
+    Carpet = "carpet",
+    CarpetLow = "carpet_low",
+    CarpetHigh = "carpet_high"
 }
 
 export enum RawMapEntityType {
@@ -74,7 +77,10 @@ export enum RawMapEntityType {
     NoGoArea = "no_go_area",
     NoMopArea = "no_mop_area",
     ActiveZone = "active_zone",
-    Carpet = "carpet"
+    Carpet = "carpet",
+    Threshold = "threshold",
+    Curtain = "curtain",
+    Ramp = "ramp",
 }
 
 export interface RawMapDataMetaData {

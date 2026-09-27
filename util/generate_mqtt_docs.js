@@ -28,7 +28,7 @@ const HomieCommonAttributes = require("../backend/lib/mqtt/homie/HomieCommonAttr
 const ValetudoEventStore = require("valetudo-backend/lib/ValetudoEventStore");
 
 
-function jekyllAlert(type, content) {
+function renderAlert(type, content) {
     return "{% alert \"" + type + "\" %}" + content + "{% endalert %}\n\n";
 }
 
@@ -49,7 +49,7 @@ On this page you can also find the exact topic to which to send commands to or f
 See the specific integration pages for instructions on how to set up autodiscovery for your home automation software
 platform:
 
-- [Home Assistant](./home-assistant-integration)
+- [Home Assistant](/pages/integrations/home-assistant-integration)
 
 Other home automation software that follows the [Homie convention](https://homieiot.github.io/) should also be able to
 automatically discover your Valetudo instance.
@@ -105,9 +105,6 @@ class FakeHassController extends HassController {
     }
 
     async refresh(component, topics) {
-    }
-
-    async dropAutoconf(component) {
     }
 
     async refreshAutoconf(component, payload) {
@@ -470,7 +467,7 @@ class FakeMqttController extends MqttController {
             for (const [what, reason] of Object.entries(handle.helpMayChange)) {
                 alert += `| ${what} | ${reason} |` + "\n";
             }
-            markdown += jekyllAlert("warning", alert);
+            markdown += renderAlert("warning", alert);
         }
 
         if (handle.gettable) {
@@ -698,19 +695,8 @@ class FakeMqttController extends MqttController {
                 "friendlyName": "Valetudo Robot",
                 "identifier": "<IDENTIFIER>"
             },
-            "interfaces": {
-                "homie": {
-                    "enabled": true,
-                    "cleanAttributesOnShutdown": false
-                },
-                "homeassistant": {
-                    "enabled": true,
-                    "cleanAutoconfOnShutdown": false
-                }
-            },
             "customizations": {
-                "topicPrefix": "<TOPIC PREFIX>",
-                "provideMapData": true
+                "topicPrefix": "<TOPIC PREFIX>"
             },
             "stateTopic": "<TOPIC PREFIX>/<IDENTIFIER>/$state"
         }
@@ -730,9 +716,6 @@ class FakeMqttController extends MqttController {
     }
 
     async shutdown() {
-    }
-
-    async dropHomieAttributes(handle) {
     }
 
     stopAutorefreshService() {

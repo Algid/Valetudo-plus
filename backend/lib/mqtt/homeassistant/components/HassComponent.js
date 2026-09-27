@@ -108,10 +108,6 @@ class HassComponent {
         for (const anchor of this.getAllAnchors(this.getTopics())) {
             anchor.unsubscribe(this.anchorSubscriber);
         }
-
-        if (options.cleanHass) {
-            await this.hass.dropAutoconf(this);
-        }
     }
 
     /**

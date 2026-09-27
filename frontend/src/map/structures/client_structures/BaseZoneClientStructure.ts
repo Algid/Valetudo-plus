@@ -175,6 +175,8 @@ abstract class BaseZoneClientStructure extends ClientStructure {
     }
 
     postProcess(): void {
+        this.isResizing = false;
+
         this.x0 = Math.round(this.x0);
         this.y0 = Math.round(this.y0);
 
