@@ -38,6 +38,7 @@ Please read the supported devices section for more information.
 - Multiple map / floor capabilities (be sure to enable in quirks!).
 - Map rotation.
 - Segment clean order.
+- Camera stream on the home page and over HTTPS (uses upstream's Duststreaming).
 - On-demand playback of custom audio.
 - MQTT support for map switching.
 - MQTT support for custom audio playback.

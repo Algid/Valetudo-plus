@@ -14,8 +14,8 @@
         },
         "basicAuth": {
             "enabled": false,
-            "username": "admin",
-            "password": "password"
+            "username": "valetudo",
+            "password": "valetudo"
         },
         "blockExternalAccess": true
     },
