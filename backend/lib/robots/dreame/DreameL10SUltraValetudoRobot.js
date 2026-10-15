@@ -227,6 +227,104 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
             }
         }));
 
+        // l10s-extended
+        this.registerCapability(new capabilities.DreameMultipleMapCapability({
+            robot: this,
+            mapConfigPath: "/data/ri/config.json",
+            mapSettingPath: "/data/ri/setting.json",
+            miot_actions: {
+                map_edit: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
+
+        // l10s-extended
+        this.registerCapability(new capabilities.DreameMultipleMapDeleteCapability({
+            robot: this,
+            miot_actions: {
+                map_edit: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
+
+        // l10s-extended
+        this.registerCapability(new capabilities.DreameMultipleMapRenameCapability({
+            robot: this,
+            miot_actions: {
+                map_edit: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
+
+        // l10s-extended
+        this.registerCapability(new capabilities.DreameMultipleMapRotateCapability({
+            robot: this,
+            miot_actions: {
+                map_edit: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
+
+        // l10s-extended
+        this.registerCapability(new capabilities.DreameMapSegmentCleanOrderCapability({
+            robot: this,
+            miot_actions: {
+                map_edit: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
+
+
         [
             capabilities.DreameCarpetModeControlCapability,
             capabilities.DreameKeyLockCapability,
@@ -243,6 +341,7 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
             capabilities.DreameFloorMaterialDirectionAwareNavigationControlCapability,
             capabilities.DreameCleanRouteControlCapabilityV1,
             capabilities.DreameMopDockMopDryingTimeControlCapability,
+            capabilities.DreameSpeakerPlayAudioCapability,
         ].forEach(capability => {
             this.registerCapability(new capability({robot: this}));
         });
@@ -258,6 +357,7 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
                 quirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.DRAIN_INTERNAL_WATER_TANK),
                 quirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.WATER_HOOKUP_TEST_TRIGGER),
                 quirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.FAN_SPEED_ONE_TIME_TURBO),
+                quirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MULTI_MAP),
             ]
         }));
 
