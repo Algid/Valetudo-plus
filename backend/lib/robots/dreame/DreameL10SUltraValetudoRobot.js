@@ -228,7 +228,7 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
         }));
 
         // l10s-extended
-        this.registerCapability(new capabilities.DreameMultipleMapCapability({
+        this.registerCapability(new capabilities.DreameL10SUltraMultipleMapCapability({
             robot: this,
             mapConfigPath: "/data/ri/config.json",
             mapSettingPath: "/data/ri/setting.json",
