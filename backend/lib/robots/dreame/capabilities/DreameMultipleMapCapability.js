@@ -27,12 +27,19 @@ class DreameMultipleMapCapability extends MultipleMapCapability {
      * @param {object} options.miot_properties.actionResult
      * @param {number} options.miot_properties.actionResult.piid
      *
+     * @param {string} [options.mapConfigPath]
+     * @param {string} [options.mapSettingPath]
+     *
      */
     constructor(options) {
         super(options);
 
         this.miot_actions = options.miot_actions;
         this.miot_properties = options.miot_properties;
+
+        // Older generations (e.g. r2228o) keep the same JSON structure but without the "2" suffix
+        this.mapConfigPath = options.mapConfigPath ?? "/data/ri/config.json2";
+        this.mapSettingPath = options.mapSettingPath ?? "/data/ri/setting.json2";
     }
 
     /**
@@ -48,12 +55,12 @@ class DreameMultipleMapCapability extends MultipleMapCapability {
 
         try {
             // Contains maps IDs and active map
-            const mapConfig = (await readFilePromise("/data/ri/config.json2")).toString();
+            const mapConfig = (await readFilePromise(this.mapConfigPath)).toString();
             /** @type {{ curr_id: number; order: Array<number> }} */
             const parsedConfig = JSON.parse(mapConfig);
 
             // Contains map names
-            const mapSetting = (await readFilePromise("/data/ri/setting.json2")).toString();
+            const mapSetting = (await readFilePromise(this.mapSettingPath)).toString();
             /** @type {{ map_names: { [key: string]: string } }} */
             const parsedSetting = JSON.parse(mapSetting);
 
