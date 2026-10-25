@@ -58,6 +58,7 @@
         "timeout": 10000
     },
     "timers": {},
+    "delayedStart": {},
     "logLevel": "info",
     "debug": {
         "debugHassAnchors": false,

@@ -66,6 +66,9 @@
           "timers": {
             "type": "object"
           },
+          "delayedStart": {
+            "type": "object"
+          },
           "logLevel": {
             "type": "string",
             "enum": [

@@ -294,6 +294,20 @@ export interface TimerProperties {
     supportedPreActions: Array<ValetudoTimerPreActionType>
 }
 
+export interface DelayedStartRequest {
+    delay: number;
+    action: Timer["action"];
+    pre_actions?: Timer["pre_actions"];
+}
+
+export interface DelayedStartInformation {
+    pending: {
+        remaining: number;
+        action: Timer["action"];
+        pre_actions?: Timer["pre_actions"];
+    } | null;
+}
+
 export interface MQTTConfiguration {
     enabled: boolean;
     connection: {

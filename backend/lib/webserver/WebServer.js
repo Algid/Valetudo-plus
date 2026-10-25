@@ -19,6 +19,7 @@ const RobotRouter = require("./RobotRouter");
 const ValetudoRouter = require("./ValetudoRouter");
 
 
+const DelayedStartRouter = require("./DelayedStartRouter");
 const fs = require("fs");
 const MQTTRouter = require("./MQTTRouter");
 const NetworkAdvertisementManagerRouter = require("./NetworkAdvertisementManagerRouter");
@@ -39,6 +40,7 @@ class WebServer {
      * @param {import("../NTPClient")} options.ntpClient
      * @param {import("../updater/Updater")} options.updater
      * @param {import("../scheduler/Scheduler")} options.scheduler
+     * @param {import("../scheduler/DelayedStart")} options.delayedStart
      * @param {import("../ValetudoEventStore")} options.valetudoEventStore
      * @param {import("../Configuration")} options.config
      * @param {import("../PhoenixManager")} options.phoenixManager
@@ -163,6 +165,8 @@ class WebServer {
         this.app.use("/api/v2/ntpclient/", new NTPClientRouter({config: this.config, ntpClient: options.ntpClient, validator: this.validator}).getRouter());
 
         this.app.use("/api/v2/timers/", new TimerRouter({config: this.config, robot: this.robot, validator: this.validator, scheduler: options.scheduler}).getRouter());
+
+        this.app.use("/api/v2/delayedstart/", new DelayedStartRouter({delayedStart: options.delayedStart, validator: this.validator}).getRouter());
 
         this.app.use("/api/v2/system/", new SystemRouter({phoenixManager: this.phoenixManager}).getRouter());
 

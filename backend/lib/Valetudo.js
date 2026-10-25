@@ -12,6 +12,7 @@ const v8 = require("v8");
 const ValetudoEventStore = require("./ValetudoEventStore");
 const Webserver = require("./webserver/WebServer");
 
+const DelayedStart = require("./scheduler/DelayedStart");
 const NetworkAdvertisementManager = require("./NetworkAdvertisementManager");
 const NetworkConnectionStabilizer = require("./NetworkConnectionStabilizer");
 const PhoenixManager = require("./PhoenixManager");
@@ -102,6 +103,11 @@ class Valetudo {
             ntpClient: this.ntpClient
         });
 
+        this.delayedStart = new DelayedStart({
+            config: this.config,
+            scheduler: this.scheduler
+        });
+
         this.webserver = new Webserver({
             config: this.config,
             phoenixManager: this.phoenixManager,
@@ -111,6 +117,7 @@ class Valetudo {
             ntpClient: this.ntpClient,
             updater: this.updater,
             scheduler: this.scheduler,
+            delayedStart: this.delayedStart,
             valetudoEventStore: this.valetudoEventStore,
             valetudoHelper: this.valetudoHelper
         });
@@ -259,6 +266,7 @@ class Valetudo {
         await this.networkConnectionStabilizer.shutdown();
         await this.networkAdvertisementManager.shutdown();
         await this.scheduler.shutdown();
+        await this.delayedStart.shutdown();
         if (this.mqttController) {
             await this.mqttController.shutdown();
         }

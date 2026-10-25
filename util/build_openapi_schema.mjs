@@ -28,6 +28,7 @@ const options = {
             {name: "NetworkAdvertisement", description: "Network Advertisement Manager API"},
             {name: "NTP", description: "NTP Client API"},
             {name: "Timers", description: "Timers API"},
+            {name: "Delayed start", description: "Delayed start API"},
             {name: "Updater", description: "Update Valetudo using Valetudo"},
 
             {name: "BasicControlCapability", description: "Basic control capability"},

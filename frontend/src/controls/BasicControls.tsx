@@ -24,6 +24,7 @@ import {
 import React from "react";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {usePendingMapAction} from "../map/BaseMap";
+import {DelayedStartMenuButton, DelayedStartStatus} from "./DelayedStart";
 
 const StartStates: StatusState["value"][] = ["idle", "docked", "paused", "error"];
 const PauseStates: StatusState["value"][] = ["cleaning", "returning", "moving"];
@@ -122,8 +123,7 @@ const BasicControls = (): React.ReactElement => {
                                     variant="outlined"
                                 >
                                     {buttons.map(({ label, command, enabled, Icon }) => {
-                                        return (
-
+                                        const button = (
                                             <Button
                                                 key={command}
                                                 variant="outlined"
@@ -138,8 +138,13 @@ const BasicControls = (): React.ReactElement => {
                                                 <Icon />
                                             </Button>
                                         );
+
+                                        return command === "start" ? [button, <DelayedStartMenuButton key="delayed_start" disabled={!enabled || isPending} />] : button;
                                     })}
                                 </ButtonGroup >
+                            </Grid2>
+                            <Grid2>
+                                <DelayedStartStatus />
                             </Grid2>
                         </Grid2>
                     </Box>

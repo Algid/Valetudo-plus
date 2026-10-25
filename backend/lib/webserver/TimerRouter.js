@@ -191,7 +191,6 @@ class TimerRouter {
     }
 
     /**
-     * @private
      * @param {object} body
      */
     static MAP_ACTION_FROM_BODY(body) {
@@ -220,7 +219,6 @@ class TimerRouter {
     }
 
     /**
-     * @private
      * @param {object} body
      */
     static MAP_PRE_ACTIONS_FROM_BODY(body) {

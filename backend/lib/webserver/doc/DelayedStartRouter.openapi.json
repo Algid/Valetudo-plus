@@ -1,0 +1,118 @@
+{
+  "/api/v2/delayedstart": {
+    "get": {
+      "tags": [
+        "Delayed start"
+      ],
+      "summary": "Get the pending delayed start",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelayedStartResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "Delayed start"
+      ],
+      "summary": "Schedule a one-off cleanup after a delay, replacing any pending one",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "delay",
+                "action"
+              ],
+              "properties": {
+                "delay": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 86400,
+                  "description": "Seconds from now, measured by the robot's clock"
+                },
+                "action": {
+                  "$ref": "#/components/schemas/ValetudoTimer/properties/action"
+                },
+                "pre_actions": {
+                  "$ref": "#/components/schemas/ValetudoTimer/properties/pre_actions"
+                }
+              }
+            },
+            "examples": {
+              "full_cleanup": {
+                "description": "A full cleanup in 20 minutes",
+                "value": {
+                  "delay": 1200,
+                  "action": {
+                    "type": "full_cleanup",
+                    "params": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelayedStartResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Delayed start"
+      ],
+      "summary": "Cancel the pending delayed start",
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DelayedStartResponse": {
+        "type": "object",
+        "properties": {
+          "pending": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "remaining": {
+                "type": "number",
+                "description": "Seconds until the cleanup starts, measured by the robot's clock"
+              },
+              "action": {
+                "$ref": "#/components/schemas/ValetudoTimer/properties/action"
+              },
+              "pre_actions": {
+                "$ref": "#/components/schemas/ValetudoTimer/properties/pre_actions"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

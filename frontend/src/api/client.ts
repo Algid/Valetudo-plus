@@ -66,6 +66,8 @@ import {
     SystemRuntimeInfo,
     Timer,
     TimerInformation,
+    DelayedStartInformation,
+    DelayedStartRequest,
     TimerProperties,
     UpdaterConfiguration,
     UpdaterState,
@@ -764,6 +766,30 @@ export const fetchTimerProperties = async (): Promise<TimerProperties> => {
         .then(({ data }) => {
             return data;
         });
+};
+
+export const fetchDelayedStart = async (): Promise<DelayedStartInformation> => {
+    return valetudoAPI
+        .get<DelayedStartInformation>("/delayedstart")
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendDelayedStart = async (request: DelayedStartRequest): Promise<DelayedStartInformation> => {
+    return valetudoAPI
+        .put<DelayedStartInformation>("/delayedstart", request)
+        .then(({ status, data }) => {
+            if (status !== 200) {
+                throw new Error("Could not schedule delayed start");
+            }
+
+            return data;
+        });
+};
+
+export const deleteDelayedStart = async (): Promise<void> => {
+    await valetudoAPI.delete("/delayedstart");
 };
 
 export const fetchValetudoEvents = async (): Promise<Array<ValetudoEvent>> => {
