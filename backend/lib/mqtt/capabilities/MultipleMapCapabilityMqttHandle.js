@@ -3,6 +3,7 @@ const CapabilityMqttHandle = require("./CapabilityMqttHandle");
 const ComponentType = require("../homeassistant/ComponentType");
 const DataType = require("../homie/DataType");
 const EntityCategory = require("../homeassistant/EntityCategory");
+const HassMultipleMapSegments = require("../homeassistant/HassMultipleMapSegments");
 const InLineHassComponent = require("../homeassistant/components/InLineHassComponent");
 const Logger = require("../../Logger");
 const PropertyMqttHandle = require("../handles/PropertyMqttHandle");
@@ -42,13 +43,13 @@ class MultipleMapCapabilityMqttHandle extends CapabilityMqttHandle {
                     await this.loadMapOptions();
                 },
                 getter: async () => {
-                    const activeMap = this.maps.find(entry => entry.active);
+                    const activeIndex = this.maps.findIndex(entry => entry.active);
 
-                    if (!activeMap) {
+                    if (activeIndex === -1) {
                         throw new Error("Failed to find active map");
                     }
 
-                    return this.mapEntryToOptionStr(activeMap);
+                    return this.mapsOptions[activeIndex];
                 },
                 helpText: "This handle allows setting the current active map.",
                 helpMayChange: {
@@ -97,7 +98,8 @@ class MultipleMapCapabilityMqttHandle extends CapabilityMqttHandle {
             this.maps = maps;
 
             this.mapsOptions.splice(0, this.mapsOptions.length);
-            this.mapsOptions.push(...maps.map(entry => this.mapEntryToOptionStr(entry)));
+            const mapNames = HassMultipleMapSegments.MAP_DISPLAY_NAMES(maps);
+            this.mapsOptions.push(...maps.map(entry => mapNames[entry.id]));
         } catch (err) {
             Logger.error("Failed to load maps: ", err);
         }
@@ -112,25 +114,20 @@ class MultipleMapCapabilityMqttHandle extends CapabilityMqttHandle {
     }
 
     /**
-     * @param {import("../../entities/core/ValetudoMapEntry")} entry
-     * @returns {string}
-     */
-    mapEntryToOptionStr(entry) {
-        return `${entry.name} [${entry.id}]`;
-    }
-
-    /**
+     * Also accepts "<name> [<id>]", which every option used to be, so that existing automations keep working
+     *
      * @param {string} optionStr
      * @returns {import("../../entities/core/ValetudoMapEntry") | undefined}
      */
     findMapEntryByOptionStr(optionStr) {
-        const result = /^(.+) \[(.+)\]$/.exec(optionStr);
-
-        if (!result || result.length !== 3) {
-            return undefined;
+        const index = this.mapsOptions.indexOf(optionStr);
+        if (index !== -1) {
+            return this.maps[index];
         }
 
-        return this.maps.find(entry => entry.name === result[1] && entry.id === result[2]);
+        const result = /^.+ \[(.+)\]$/.exec(optionStr);
+
+        return result ? this.maps.find(entry => entry.id === result[1]) : undefined;
     }
 }
 

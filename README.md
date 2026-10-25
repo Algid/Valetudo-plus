@@ -30,6 +30,7 @@ Please read the supported devices section for more information.
 
 - HTTPS support with redirection from HTTP to HTTPS when enabled.
 - MQTT support for mop cleaning / drying.
+- Start later option to schedule a one-off cleanup after a delay or at a set time.
 - Updated postboot script with iptables rules.
 - Various other small tweaks.
 

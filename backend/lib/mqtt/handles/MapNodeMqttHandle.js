@@ -3,6 +3,7 @@ const crc = require("crc");
 const DataType = require("../homie/DataType");
 const fs = require("fs");
 const HassAnchor = require("../homeassistant/HassAnchor");
+const HassMultipleMapSegments = require("../homeassistant/HassMultipleMapSegments");
 const InLineHassComponent = require("../homeassistant/components/InLineHassComponent");
 const Logger = require("../../Logger");
 const MqttCommonAttributes = require("../MqttCommonAttributes");
@@ -26,6 +27,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
         }));
 
         this.robot = options.robot;
+        this.multipleMapSegments = new HassMultipleMapSegments({robot: this.robot});
 
         this.registerChild(
             new PropertyMqttHandle({
@@ -58,6 +60,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
                     for (const segment of this.robot.state.map.getSegments()) {
                         res[segment.id] = segment.name ?? segment.id;
                     }
+                    const hassSegments = await this.multipleMapSegments.getSegments(res, this.robot.state.map.metaData.id);
 
                     await this.controller.hassAnchorProvider.getAnchor(
                         HassAnchor.ANCHOR.MAP_SEGMENTS_LEN
@@ -65,7 +68,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
 
                     await this.controller.hassAnchorProvider.getAnchor(
                         HassAnchor.ANCHOR.MAP_SEGMENTS
-                    ).post(res);
+                    ).post(hassSegments);
 
                     return res;
                 },

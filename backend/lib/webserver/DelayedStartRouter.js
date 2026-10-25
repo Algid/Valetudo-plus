@@ -21,7 +21,7 @@ class DelayedStartRouter {
 
     initRoutes() {
         this.router.get("/", (req, res) => {
-            res.json(DelayedStartRouter.MAP_PENDING_TO_RESPONSE(this.delayedStart.getPending()));
+            res.json(this.mapPendingToResponse(this.delayedStart.getPending()));
         });
 
         this.router.put("/", this.validator, (req, res) => {
@@ -41,7 +41,7 @@ class DelayedStartRouter {
                         pre_actions: preActions
                     });
 
-                    res.json(DelayedStartRouter.MAP_PENDING_TO_RESPONSE(pending));
+                    res.json(this.mapPendingToResponse(pending));
                 }
             } else {
                 res.sendStatus(400);
@@ -65,7 +65,7 @@ class DelayedStartRouter {
      * @private
      * @param {import("../scheduler/DelayedStart").DelayedStartDefinition|null} pending
      */
-    static MAP_PENDING_TO_RESPONSE(pending) {
+    mapPendingToResponse(pending) {
         if (pending === null) {
             return {pending: null};
         }

@@ -1,6 +1,7 @@
 const CapabilityMqttHandle = require("./CapabilityMqttHandle");
 const DataType = require("../homie/DataType");
 const HassAnchor = require("../homeassistant/HassAnchor");
+const HassMultipleMapSegments = require("../homeassistant/HassMultipleMapSegments");
 const Logger = require("../../Logger");
 const PropertyMqttHandle = require("../handles/PropertyMqttHandle");
 
@@ -39,10 +40,15 @@ class MapSegmentationCapabilityMqttHandle extends CapabilityMqttHandle {
                         requestOptions.customOrder = true;
                     }
 
+                    const segmentIds = HassMultipleMapSegments.RESOLVE_SEGMENT_IDS(this.robot, reqSegments.segment_ids, this.robot.state.map?.metaData?.id);
+                    if (segmentIds.length === 0) {
+                        throw new Error("None of the requested segments are on the active map");
+                    }
+
                     const robotSegments = await this.capability.getSegments();
                     const segments = [];
 
-                    for (const id of reqSegments.segment_ids) {
+                    for (const id of segmentIds) {
                         const segment = robotSegments.find(segm => {
                             return segm.id === `${id}`; // Ensure that it works even if the user incorrectly passes numbers
                         });
@@ -61,6 +67,8 @@ class MapSegmentationCapabilityMqttHandle extends CapabilityMqttHandle {
                 "Simply use the Map in the Valetudo UI, select the desired segments and iterations and then long-press the button that would start the action.<br/>\n" +
                 "This will open a modal containing the copy-pasteable payload.\n\n" +
                 "\n**Note:** Not all firmwares support customOrder.\n\n" +
+                "On robots with multiple maps, segment IDs may also be prefixed with their map ID as `<mapId>_<segmentId>`, " +
+                "as published to Home Assistant. Only segments of the active map are cleaned.\n\n" +
                 "Sample payload:\n\n" +
                 "```json\n" +
                 JSON.stringify({
