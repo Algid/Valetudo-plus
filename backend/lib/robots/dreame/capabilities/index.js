@@ -49,6 +49,7 @@ module.exports = {
     DreameMopMappingPassCapability: require("./DreameMopMappingPassCapability"),
     DreameMopTwistControlCapabilityV1: require("./DreameMopTwistControlCapabilityV1"),
     DreameMopTwistControlCapabilityV2: require("./DreameMopTwistControlCapabilityV2"),
+    DreameL10SUltraMultipleMapCapability: require("./DreameL10SUltraMultipleMapCapability"),
     DreameMultipleMapCapability: require("./DreameMultipleMapCapability"),
     DreameMultipleMapDeleteCapability: require("./DreameMultipleMapDeleteCapability"),
     DreameMultipleMapRenameCapability: require("./DreameMultipleMapRenameCapability"),
