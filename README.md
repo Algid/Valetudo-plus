@@ -55,6 +55,7 @@ Please let me know if you have tested this on your robot and what you got workin
 - Dreame X40 Ultra
 - Dreame X40 Master (Tested in https://github.com/Algid/Valetudo-plus/discussions/6)
 - Dreame L40 Ultra (Tested in https://github.com/Algid/Valetudo-plus/discussions/6)
+- Dreame L20 Ultra (Tested in https://github.com/Algid/Valetudo-plus/issues/15)
 
 ## Screenshots
 
