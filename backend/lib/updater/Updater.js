@@ -50,7 +50,7 @@ class Updater {
                 this.updateProvider = new GithubValetudoUpdateProvider();
                 break;
             case GithubValetudoPreReleaseUpdateProvider.TYPE:
-                this.updateProvider = new GithubValetudoUpdateProvider();
+                this.updateProvider = new GithubValetudoPreReleaseUpdateProvider();
                 break;
             default:
                 Logger.error(`Invalid UpdateProvider ${updaterConfig.updateProvider.type}`);
